@@ -1,7 +1,6 @@
 namespace OwlBank.Services;
 using OwlBank.DTOs.UserDTO;
 using OwlBank.Repository;
-using OwlBank.Models;
 
 public class AdminService : IAdminService
 {

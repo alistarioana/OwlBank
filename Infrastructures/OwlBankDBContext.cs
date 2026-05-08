@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using OwlBank.Models;
-using System.Text.Json;
 
 namespace OwlBank.Repository;
 

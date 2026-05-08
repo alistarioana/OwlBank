@@ -9,5 +9,4 @@ public class BankStatement
     public decimal? SpentAmount { get; set; }
     public decimal? ReceivedAmount { get; set; }
     public string? Description { get; set; }
-    
 }

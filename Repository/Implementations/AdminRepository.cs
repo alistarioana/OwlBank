@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using OwlBank.Models;
 
 namespace OwlBank.Repository;
-using OwlBank.Models;
 
 public class AdminRepository : IAdminRepository
 {
