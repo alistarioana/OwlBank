@@ -6,7 +6,6 @@ using OwlBank.Services;
 using Microsoft.AspNetCore.Mvc;
 using OwlBank.DTOs.UserDTO;
 
-
 [ApiController]
 [Route("users")]
 [Authorize(Roles = $"{nameof(Role.Manager)}, {nameof(Role.Admin)}")]

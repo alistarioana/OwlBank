@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using OwlBank.DTOs.UserDTO;
 namespace OwlBank.Controllers;
-using OwlBank.Models;
 using OwlBank.Services;
 
 [ApiController]
