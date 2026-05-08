@@ -1,0 +1,61 @@
+using Microsoft.EntityFrameworkCore;
+using OwlBank.DTOs.UserDTO;
+using OwlBank.Models;
+
+namespace OwlBank.Repository;
+
+public class UserRepository : IUserRepository
+{
+    private readonly OwlBankDBContext _dbContext;
+    public UserRepository(OwlBankDBContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task<User> AddUser(User user)
+    {
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+        var addUser = await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
+        return addUser.Entity;
+    }
+
+    public async Task DeleteUser(Guid id)
+    {
+        var removeUser = _dbContext.Users.Remove(_dbContext.Users.Find(id));
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateUser(Guid id, UpdateUserRequest userRequest)
+    {
+        var updateUser = await _dbContext.Users.FindAsync(id);
+        if (updateUser == null) return;
+        
+        if (userRequest.FirstName != null) updateUser.FirstName = userRequest.FirstName;
+        if (userRequest.LastName != null) updateUser.LastName = userRequest.LastName;
+        if (userRequest.Email != null) updateUser.Email = userRequest.Email;
+        if (userRequest.Password != null) updateUser.Password = userRequest.Password;
+        if (userRequest.DateOfBirth != null) updateUser.DateOfBirth = userRequest.DateOfBirth;
+        if(userRequest.Username != null) updateUser.Username = userRequest.Username;
+        if (userRequest.PhoneNumber != null) updateUser.PhoneNumber = userRequest.PhoneNumber;
+        
+        await _dbContext.SaveChangesAsync();
+    }
+    
+    public async Task<User> GetUserById(Guid id)
+    {
+        return await _dbContext.Users.FindAsync(id);
+    }
+
+    public async Task<User?> GetUserByEmail(string email)
+    {
+        var user = await _dbContext.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+       
+        return user;
+    }
+
+    public async Task SaveChanges()
+    {
+        await _dbContext.SaveChangesAsync();
+    }
+}
