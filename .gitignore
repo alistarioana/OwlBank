@@ -208,3 +208,8 @@ FakesAssemblies/
 
 # JetBrains Rider
 *.sln.iml
+*.xml
+
+.idea/dataSources.xml
+.idea/vcs.xml
+*.DotSettings.user
