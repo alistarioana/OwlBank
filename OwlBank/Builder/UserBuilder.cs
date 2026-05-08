@@ -25,7 +25,7 @@ public  class UserBuilder
         return this;
     }
 
-    public  UserBuilder SetPhoneNumber(int? phoneNumber)
+    public  UserBuilder SetPhoneNumber(string? phoneNumber)
     {
         user.PhoneNumber = phoneNumber;
         return this;

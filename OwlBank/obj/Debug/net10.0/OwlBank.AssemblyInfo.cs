@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OwlBank")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6e38304bbb119cafb6085eb8e6ddf67cf015b425")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0e208522973639fb07bbfc88d56e5123debff038")]
 [assembly: System.Reflection.AssemblyProductAttribute("OwlBank")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OwlBank")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

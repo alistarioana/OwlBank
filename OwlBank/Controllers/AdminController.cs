@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace OwlBank.Controllers;
 using OwlBank.Models;
 using OwlBank.Services;
@@ -7,6 +9,7 @@ using OwlBank.DTOs.UserDTO;
 
 [ApiController]
 [Route("users")]
+[Authorize(Roles = $"{nameof(Role.Manager)}, {nameof(Role.Admin)}")]
 public class AdminController : ControllerBase
 {
     private readonly IAdminService _service;

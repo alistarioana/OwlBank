@@ -139,3 +139,6 @@
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank/obj/Debug/net10.0/OwlBank.pdb
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank/obj/Debug/net10.0/OwlBank.genruntimeconfig.cache
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank/obj/Debug/net10.0/ref/OwlBank.dll
+/Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank/bin/Debug/net10.0/FluentValidation.dll
+/Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank/bin/Debug/net10.0/FluentValidation.AspNetCore.dll
+/Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank/bin/Debug/net10.0/FluentValidation.DependencyInjectionExtensions.dll

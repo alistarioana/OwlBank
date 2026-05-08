@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OwlBank.Repository;
@@ -12,9 +13,11 @@ using OwlBank.Repository;
 namespace OwlBank.Migrations
 {
     [DbContext(typeof(OwlBankDBContext))]
-    partial class OwlBankDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260508121051_emailUniq")]
+    partial class emailUniq
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,7 +67,6 @@ namespace OwlBank.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("FirstName")
@@ -76,8 +78,8 @@ namespace OwlBank.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
+                    b.Property<int?>("PhoneNumber")
+                        .HasColumnType("integer");
 
                     b.PrimitiveCollection<List<string>>("UserRoles")
                         .IsRequired()

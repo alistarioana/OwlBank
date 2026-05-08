@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,11 +7,31 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OwlBank.Migrations
 {
     /// <inheritdoc />
-    public partial class BankStatement : Migration
+    public partial class ChangefromStringRoleToEnumRole : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uuid", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: true),
+                    Password = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    FirstName = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<int>(type: "integer", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Balance = table.Column<decimal>(type: "numeric", nullable: true),
+                    UserRoles = table.Column<List<string>>(type: "text[]", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.ID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "BankStatement",
                 columns: table => new
@@ -44,6 +65,9 @@ namespace OwlBank.Migrations
         {
             migrationBuilder.DropTable(
                 name: "BankStatement");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

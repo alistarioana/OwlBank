@@ -23,22 +23,6 @@ public class UserService : IUserService
         _bankStatementRepository = bankStatementRepository;
     }
 
-    public async Task AddUser(CreateUserRequest userRequest)
-    {
-        User create = new UserBuilder()
-            .SetFirstName(userRequest.FirstName)
-            .SetLastName(userRequest.LastName)
-            .SetBalance(userRequest.Balance)
-            .SetEmail(userRequest.Email)
-            .SetDateOfBirth(userRequest.DateOfBirth)
-            .SetPhoneNumber(userRequest.PhoneNumber)
-            .SetPassword(userRequest.Password)
-            .SetUserName(userRequest.Username)
-            .Build();
-        
-        await _userRepository.AddUser(create);
-    }
-
     public async Task DeleteUser(Guid id)
     {
         await _userRepository.DeleteUser(id);

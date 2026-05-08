@@ -9,6 +9,7 @@ using OwlBank.Services;
 
 [ApiController]
 [Route("users")]
+[Authorize(Roles = "User")]
 public class UserController : ControllerBase
 {
         private readonly IUserService _service;
@@ -18,20 +19,6 @@ public class UserController : ControllerBase
             _service = service;
         }
         
-        [HttpPost("register")]
-        public async Task AddUser(CreateUserRequest userRequest)
-        { 
-            await _service.AddUser(userRequest);
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest userRequest)
-        {
-            var token = await _service.Login(userRequest);
-            return Ok(token);
-        }
-        
-        [Authorize]
         [HttpPost("{id}/deposit")]
         public async Task<IActionResult> Deposit(Guid id, DepositBalanceRequest dto)
         {
@@ -39,7 +26,6 @@ public class UserController : ControllerBase
             return Ok();
         }
 
-        [Authorize]
         [HttpPost("{id}/withdraw")]
         public async Task<IActionResult> Withdraw(Guid id, WithdrawBalanceRequest dto)
         {

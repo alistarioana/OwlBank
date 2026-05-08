@@ -47,13 +47,10 @@ public class UserRepository : IUserRepository
         return await _dbContext.Users.FindAsync(id);
     }
 
-    public async Task<User> GetUserByEmail(string email)
+    public async Task<User?> GetUserByEmail(string email)
     {
         var user = await _dbContext.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
-        if (user == null)
-        {
-            throw new Exception("User not found");
-        }
+       
         return user;
     }
 
