@@ -81,8 +81,6 @@ public class UserService : IUserService
         await _bankStatementRepository.WithdrawAction(bankStatement);
     }
 
-  
-
     public async Task<string> Login(LoginRequest userRequest)
     {
        var user = await _userRepository.GetUserByEmail(userRequest.Email);
@@ -107,16 +105,5 @@ public class UserService : IUserService
 
        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
        return jwt;
-    }
-    
-    
-    public Task<int> GetFirstNumber(int test)
-    {
-       return  Task.FromResult(1 + test);
-    }
-
-    public Task<int> GetSecondNumber(CreateUserRequest req)
-    {
-        return  Task.FromResult(2);
     }
 }

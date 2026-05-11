@@ -38,10 +38,8 @@
     ".NETCoreApp,Version=v10.0": {
       "OwlBank.Tests/1.0.0": {
         "dependencies": {
-          "CoverageChecker": "0.9.0",
           "Microsoft.NET.Test.Sdk": "18.5.1",
           "OwlBank": "1.0.0",
-          "coverlet.collector": "6.0.4",
           "xunit": "2.9.3",
           "xunit.runner.visualstudio": "3.1.4",
           "Microsoft.AspNetCore.Antiforgery": "10.0.0.0",
@@ -382,21 +380,6 @@
         },
         "compile": {
           "lib/net6.0/Castle.Core.dll": {}
-        }
-      },
-      "CoverageChecker/0.9.0": {
-        "dependencies": {
-          "Microsoft.Extensions.FileSystemGlobbing": "10.0.7",
-          "Microsoft.Extensions.Logging.Abstractions": "10.0.7"
-        },
-        "runtime": {
-          "lib/net10.0/CoverageChecker.dll": {
-            "assemblyVersion": "0.0.0.0",
-            "fileVersion": "0.9.0.0"
-          }
-        },
-        "compile": {
-          "lib/net10.0/CoverageChecker.dll": {}
         }
       },
       "FluentValidation/11.11.0": {
@@ -3036,9 +3019,6 @@
         },
         "compileOnly": true
       },
-      "coverlet.collector/6.0.4": {
-        "compileOnly": true
-      },
       "Microsoft.CodeAnalysis.Analyzers/1.1.0": {
         "compileOnly": true
       },
@@ -3316,13 +3296,6 @@
       "sha512": "sha512-rpYtIczkzGpf+EkZgDr9CClTdemhsrwA/W5hMoPjLkRFnXzH44zDLoovXeKtmxb1ykXK9aJVODSpiJml8CTw2g==",
       "path": "castle.core/5.1.1",
       "hashPath": "castle.core.5.1.1.nupkg.sha512"
-    },
-    "CoverageChecker/0.9.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-smMSWAUtWBH9oM06/tj2bq1/IKPGCk8Erw2CCcnDSu445sIsBGFa084SlChLXHFctbfjH57uk6bjtt7IGWm2tQ==",
-      "path": "coveragechecker/0.9.0",
-      "hashPath": "coveragechecker.0.9.0.nupkg.sha512"
     },
     "FluentValidation/11.11.0": {
       "type": "package",
@@ -5157,13 +5130,6 @@
       "type": "referenceassembly",
       "serviceable": false,
       "sha512": ""
-    },
-    "coverlet.collector/6.0.4": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-lkhqpF8Pu2Y7IiN7OntbsTtdbpR1syMsm2F3IgX6ootA4ffRqWL5jF7XipHuZQTdVuWG/gVAAcf8mjk8Tz0xPg==",
-      "path": "coverlet.collector/6.0.4",
-      "hashPath": "coverlet.collector.6.0.4.nupkg.sha512"
     },
     "Microsoft.CodeAnalysis.Analyzers/1.1.0": {
       "type": "package",

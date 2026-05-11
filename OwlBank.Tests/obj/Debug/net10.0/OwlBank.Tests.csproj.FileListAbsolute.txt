@@ -1,5 +1,4 @@
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank.Tests/bin/Debug/net10.0/.msCoverageSourceRootsMapping_OwlBank.Tests
-/Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank.Tests/bin/Debug/net10.0/CoverletSourceRootsMapping_OwlBank.Tests
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank.Tests/bin/Debug/net10.0/xunit.abstractions.dll
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank.Tests/bin/Debug/net10.0/OwlBank.deps.json
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank.Tests/bin/Debug/net10.0/OwlBank.runtimeconfig.json
@@ -445,4 +444,3 @@
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank.Tests/bin/Debug/net10.0/Microsoft.AspNetCore.TestHost.dll
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank.Tests/bin/Debug/net10.0/runtimes/win/lib/net10.0/System.Diagnostics.EventLog.Messages.dll
 /Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank.Tests/obj/Debug/net10.0/MvcTestingAppManifest.json
-/Users/gabrielserban/Applications/Ioana Learning projects/OwlBank/OwlBank.Tests/bin/Debug/net10.0/CoverageChecker.dll

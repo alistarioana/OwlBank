@@ -43,12 +43,4 @@ public class UserController : ControllerBase
         {
             await _service.UpdateUser(id, userRequest);
         }
-
-        public async Task<IActionResult> AddNumbers()
-        {
-            int add = await _service.GetFirstNumber(2) + await _service.GetSecondNumber(new CreateUserRequest()); 
-            int mult = await _service.GetFirstNumber(2) * 2 * add;
-
-            return Ok(mult);
-        }
 }

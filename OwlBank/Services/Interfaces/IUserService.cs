@@ -8,6 +8,4 @@ public interface IUserService
     public Task UpdateUser(Guid id, UpdateUserRequest userRequest);
     public Task Deposit(Guid id, decimal amount, string description);
     public Task Withdraw(Guid id, decimal amount, string description);
-    public Task<int> GetFirstNumber(int test);
-    public Task<int> GetSecondNumber(CreateUserRequest request);
 }
