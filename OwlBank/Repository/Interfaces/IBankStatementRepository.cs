@@ -2,6 +2,7 @@ using OwlBank.Models;
 
 namespace OwlBank.Repository;
 
+
 public interface IBankStatementRepository
 {
     public Task DepositAction(BankStatement bankStatement);

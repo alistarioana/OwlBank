@@ -1,7 +1,7 @@
 using OwlBank.DTOs.UserDTO;
-using OwlBank.Models;
 
 namespace OwlBank.Repository;
+using OwlBank.Models;
 
 public interface IUserRepository
 {

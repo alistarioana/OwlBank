@@ -13,7 +13,6 @@ public class LoginController : ControllerBase
     {
         _service = service;
     }
-    
     [HttpPost("register")]
     public async Task AddUser([FromQuery] CreateUserRequest userRequest)
     { 

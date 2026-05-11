@@ -6,7 +6,7 @@ using OwlBank.Services;
 
 [ApiController]
 [Route("users")]
-// [Authorize(Roles = "User")]
+[Authorize(Roles = "User")]
 public class UserController : ControllerBase
 {
         private readonly IUserService _service;
@@ -17,19 +17,17 @@ public class UserController : ControllerBase
         }
         
         [HttpPost("{id}/deposit")]
-        public async Task<IActionResult> Deposit(
-            Guid id,
-            [FromBody] DepositBalanceRequest dto)
+        public async Task<IActionResult> Deposit(Guid id, DepositBalanceRequest dto)
         {
             await _service.Deposit(id, dto.Amount, dto.Description);
-            return Ok($"Successfully deposited: {dto.Amount}");
+            return Ok();
         }
 
         [HttpPost("{id}/withdraw")]
         public async Task<IActionResult> Withdraw(Guid id, WithdrawBalanceRequest dto)
         {
             await _service.Withdraw(id, dto.Amount, dto.Description);
-            return Ok($"Successfully withdraw: {dto.Amount}");
+            return Ok();
         }
         
         [HttpDelete]

@@ -1,5 +1,4 @@
 namespace OwlBank.Models;
-
 public class User
 {
     public Guid? ID { get; set; } = Guid.NewGuid();
@@ -11,6 +10,8 @@ public class User
     public string? PhoneNumber { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public decimal? Balance { get; set; }
+    
     public List<BankStatement>? BankStatement { get; set; }
+    
     public List<string> UserRoles { get; set; } = [nameof(Role.User)];
 }   

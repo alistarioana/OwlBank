@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using OwlBank.DTOs.UserDTO;
+using OwlBank.Models;
 
 namespace OwlBank.Services;
 

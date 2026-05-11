@@ -7,11 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.Tokens;
 using OwlBank.DTOs.UserDTO;
-using OwlBank.Exceptions;
-using OwlBank.Models;
-using OwlBank.Repository;
 
 namespace OwlBank.Services;
+using OwlBank.Repository;
+using OwlBank.Models;
 
 public class UserService : IUserService
 {
@@ -37,12 +36,12 @@ public class UserService : IUserService
     public async Task Deposit(Guid id, decimal amount,  string description)
     {
         var user = await _userRepository.GetUserById(id);
-
+        
         if (user == null)
-            throw new UserNotFoundException();
+            throw new Exception("User not found");
 
         if (amount <= 0)
-            throw new InvalidAmountException();
+            throw new Exception("Invalid amount");
         
         var timeStamp = DateTime.UtcNow;
         BankStatement bankStatement = new BankStatement();
