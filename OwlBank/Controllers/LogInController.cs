@@ -6,13 +6,14 @@ using OwlBank.Services;
 namespace OwlBank.Controllers;
 
 [ApiController]
-public class LogInController : ControllerBase
+public class LoginController : ControllerBase
 {
-    private readonly ILogInService _service;
-    public LogInController(ILogInService service)
+    private readonly ILoginService _service;
+    public LoginController(ILoginService service)
     {
         _service = service;
     }
+    
     [HttpPost("register")]
     public async Task AddUser([FromQuery] CreateUserRequest userRequest)
     { 

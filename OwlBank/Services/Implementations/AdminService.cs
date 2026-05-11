@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Http.HttpResults;
-
-namespace OwlBank.Services;
 using OwlBank.DTOs.UserDTO;
 using OwlBank.Repository;
-using OwlBank.Models;
+
+namespace OwlBank.Services;
 
 public class AdminService : IAdminService
 {

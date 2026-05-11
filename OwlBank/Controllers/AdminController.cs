@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
-
-namespace OwlBank.Controllers;
+using OwlBank.DTOs.UserDTO;
 using OwlBank.Models;
 using OwlBank.Services;
+namespace OwlBank.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using OwlBank.DTOs.UserDTO;
-
 
 [ApiController]
 [Route("users")]
@@ -20,8 +18,9 @@ public class AdminController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<List<UserResponse>> GetTasks()
+    public async Task<List<UserResponse>> GetUsers()
     {
-        return await _service.GetUsers();
+        var result = await _service.GetUsers();
+        return result;
     }
 }

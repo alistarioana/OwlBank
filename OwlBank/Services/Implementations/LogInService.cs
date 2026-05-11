@@ -10,11 +10,11 @@ using OwlBank.Repository;
 
 namespace OwlBank.Services;
 
-public class LogInService : ILogInService
+public class LoginService : ILoginService
 {
     private readonly IUserRepository _userRepository;
 
-    public LogInService(IUserRepository userRepository)
+    public LoginService(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }

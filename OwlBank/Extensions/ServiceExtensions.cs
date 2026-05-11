@@ -12,7 +12,7 @@ public static class ServiceExtensions
       services.AddScoped<IAdminRepository, AdminRepository>();
       services.AddScoped<IUserService, UserService>();
       services.AddScoped<IAdminService, AdminService>();
-      services.AddScoped<ILogInService, LogInService>();
+      services.AddScoped<ILoginService, LoginService>();
       
       return services;
    }

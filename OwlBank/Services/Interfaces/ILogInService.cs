@@ -3,7 +3,7 @@ using OwlBank.DTOs.UserDTO;
 
 namespace OwlBank.Services;
 
-public interface ILogInService
+public interface ILoginService
 {
     public Task<string> Login(LoginRequest userRequest);
     public Task Register(CreateUserRequest userRequest);

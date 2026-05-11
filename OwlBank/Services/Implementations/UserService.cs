@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.Tokens;
 using OwlBank.DTOs.UserDTO;
+using OwlBank.Exceptions;
+using OwlBank.Models;
+using OwlBank.Repository;
 
 namespace OwlBank.Services;
-using OwlBank.Repository;
-using OwlBank.Models;
 
 public class UserService : IUserService
 {
@@ -36,12 +37,12 @@ public class UserService : IUserService
     public async Task Deposit(Guid id, decimal amount,  string description)
     {
         var user = await _userRepository.GetUserById(id);
-        
+
         if (user == null)
-            throw new Exception("User not found");
+            throw new UserNotFoundException();
 
         if (amount <= 0)
-            throw new Exception("Invalid amount");
+            throw new InvalidAmountException();
         
         var timeStamp = DateTime.UtcNow;
         BankStatement bankStatement = new BankStatement();
@@ -80,6 +81,8 @@ public class UserService : IUserService
         await _bankStatementRepository.WithdrawAction(bankStatement);
     }
 
+  
+
     public async Task<string> Login(LoginRequest userRequest)
     {
        var user = await _userRepository.GetUserByEmail(userRequest.Email);
@@ -104,5 +107,16 @@ public class UserService : IUserService
 
        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
        return jwt;
+    }
+    
+    
+    public Task<int> GetFirstNumber(int test)
+    {
+       return  Task.FromResult(1 + test);
+    }
+
+    public Task<int> GetSecondNumber(CreateUserRequest req)
+    {
+        return  Task.FromResult(2);
     }
 }
