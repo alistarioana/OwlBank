@@ -4,7 +4,11 @@ using OwlBank;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.DefaultIgnoreCondition =
+        System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+});
 builder.Services.AddFluentValidation();
 builder.Services.AddDependencies();
 
@@ -14,6 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<OwlBankDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+   
 builder.Services.AddAuthServices(builder.Configuration);
 
 var app = builder.Build();

@@ -6,9 +6,10 @@ using OwlBank.Models;
 public interface IUserRepository
 {
     public Task<User> AddUser(User user);
-    public Task DeleteUser(Guid id);
-    public Task UpdateUser(Guid id, UpdateUserRequest userRequest);
-    public Task<User> GetUserById(Guid id);
+    public Task DeleteUser(string id);
+    public Task UpdateUser(string id, UpdateUserRequest userRequest);
+    public Task<User?> GetUserById(string id);
     public Task<User?> GetUserByEmail(string email);
     public Task SaveChanges();
+    public Task<User?> GetUserByPhoneNumber(string phoneNumber);
 }

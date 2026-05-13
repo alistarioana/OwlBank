@@ -23,4 +23,20 @@ public class BankStatementRepository : IBankStatementRepository
         _context.SaveChanges();
         return Task.CompletedTask;
     }
+
+    public async Task<List<BankStatement>> GetStatementByDate(DateTime startDate, DateTime endDate, string? userId)
+    {
+        startDate = DateTime.SpecifyKind(
+            startDate.Date,
+            DateTimeKind.Utc);
+
+        endDate = DateTime.SpecifyKind(
+            endDate.Date.AddDays(1).AddTicks(-1),
+            DateTimeKind.Utc);
+
+        var statement = _context.BankStatement
+            .Where(x => x.UserId.ToString() == userId && x.TimeStamp >= startDate && x.TimeStamp <= endDate);
+        
+        return statement.ToList();
+    }
 }

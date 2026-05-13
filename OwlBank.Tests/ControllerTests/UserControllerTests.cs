@@ -26,12 +26,12 @@ public class UserControllerTests:IClassFixture<WebApplicationFactory<Program>>
     {
         //Arrange
         Mock<IUserService> userService = new Mock<IUserService>();
-        userService.Setup(x => x.Withdraw(Guid.NewGuid(), 20, "ok"));
+        userService.Setup(x => x.Withdraw(Guid.NewGuid().ToString(), 20, "ok"));
         //Act
         UserController controller = new UserController(userService.Object);
         WithdrawBalanceRequest dto = new WithdrawBalanceRequest();
         dto.Amount = 20;
-        IActionResult result = await controller.Withdraw(Guid.NewGuid(), dto);
+        IActionResult result = await controller.Withdraw(dto);
         //Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal("Successfully withdraw: 20", okResult.Value);
@@ -42,12 +42,12 @@ public class UserControllerTests:IClassFixture<WebApplicationFactory<Program>>
     {
         //Arrange
         Mock<IUserService> userService = new Mock<IUserService>();
-        userService.Setup(x => x.DeleteUser(It.IsAny<Guid>()));
+        userService.Setup(x => x.DeleteUser(It.IsAny<string>()));
         //Act
         UserController controller = new UserController(userService.Object);
-        controller.DeleteUser(Guid.NewGuid());
+        await controller.DeleteUser();
         //Assert
-        userService.Verify(x => x.DeleteUser(It.IsAny<Guid>()), Times.Once);
+        userService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Once);
     }
     
     [Fact]
@@ -58,16 +58,16 @@ public class UserControllerTests:IClassFixture<WebApplicationFactory<Program>>
         
         //Act
         UserController controller = new UserController(userService.Object);
-        controller.DeleteUser(Guid.NewGuid());
+        await controller.DeleteUser();
         //Assert
-        userService.Verify(x => x.DeleteUser(It.IsAny<Guid>()), Times.Once);
+        userService.Verify(x => x.DeleteUser(It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
     public async Task Deposit_ShouldThrowUserNotFoundException_When_UserTheseNotExist()
     {
         Mock<IUserRepository > userRepository = new Mock<IUserRepository>();
-        userRepository.Setup(x => x.GetUserById(It.IsAny<Guid>())).ReturnsAsync(null as User);
+        userRepository.Setup(x => x.GetUserById(It.IsAny<string>())).ReturnsAsync(null as User);
         var id = Guid.NewGuid();
         var request = new DepositBalanceRequest
         {
@@ -77,7 +77,7 @@ public class UserControllerTests:IClassFixture<WebApplicationFactory<Program>>
               
         //Act
         var response = await _client.PostAsJsonAsync(
-            $"/users/{id}/deposit",
+            $"/users/deposit",
             request);
         
         //Assert
@@ -93,7 +93,7 @@ public class UserControllerTests:IClassFixture<WebApplicationFactory<Program>>
        var factory = new TestFactory();
    
        factory.UserRepoMock
-           .Setup(x => x.GetUserById(It.IsAny<Guid>()))
+           .Setup(x => x.GetUserById(It.IsAny<string>()))
            .ReturnsAsync(new User()); 
    
        var client = factory.CreateClient();
@@ -108,7 +108,7 @@ public class UserControllerTests:IClassFixture<WebApplicationFactory<Program>>
 
        // Act
        var response = await client.PostAsJsonAsync(
-           $"/users/{id}/deposit",
+           $"/users/deposit",
            request);
        
        //Assert                                                                   
@@ -130,7 +130,7 @@ public class UserControllerTests:IClassFixture<WebApplicationFactory<Program>>
        };
 
        factory.UserRepoMock
-           .Setup(x => x.GetUserById(It.IsAny<Guid>()))
+           .Setup(x => x.GetUserById(It.IsAny<string>()))
            .ReturnsAsync(user);
 
        var client = factory.CreateClient();
@@ -143,7 +143,7 @@ public class UserControllerTests:IClassFixture<WebApplicationFactory<Program>>
 
        // Act
        var response = await client.PostAsJsonAsync(
-           $"/users/{user.ID}/deposit",
+           $"/users/deposit",
            request);
 
        // Assert

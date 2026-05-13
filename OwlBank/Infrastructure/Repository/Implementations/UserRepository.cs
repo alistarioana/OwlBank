@@ -20,13 +20,13 @@ public class UserRepository : IUserRepository
         return addUser.Entity;
     }
 
-    public async Task DeleteUser(Guid id)
+    public async Task DeleteUser(string? id)
     {
         var removeUser = _dbContext.Users.Remove(_dbContext.Users.Find(id));
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task UpdateUser(Guid id, UpdateUserRequest userRequest)
+    public async Task UpdateUser(string? id, UpdateUserRequest userRequest)
     {
         var updateUser = await _dbContext.Users.FindAsync(id);
         if (updateUser == null) return;
@@ -42,9 +42,9 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
     
-    public async Task<User> GetUserById(Guid id)
+    public async Task<User?> GetUserById(string id)
     {
-        return await _dbContext.Users.FindAsync(id);
+        return await _dbContext.Users.FindAsync(Guid.Parse(id));
     }
 
     public async Task<User?> GetUserByEmail(string email)
@@ -57,5 +57,11 @@ public class UserRepository : IUserRepository
     public async Task SaveChanges()
     {
         await _dbContext.SaveChangesAsync();
+    }
+
+    public Task<User?> GetUserByPhoneNumber(string phoneNumber)
+    {
+        var user =_dbContext.Users.Where(x => x.PhoneNumber == phoneNumber);
+        return user.FirstOrDefaultAsync();
     }
 }

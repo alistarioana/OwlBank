@@ -3,10 +3,9 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.IdentityModel.Tokens;
 using OwlBank.DTOs.UserDTO;
+using OwlBank.Exceptions;
 
 namespace OwlBank.Services;
 using OwlBank.Repository;
@@ -23,22 +22,22 @@ public class UserService : IUserService
         _bankStatementRepository = bankStatementRepository;
     }
 
-    public async Task DeleteUser(Guid id)
+    public async Task DeleteUser(string id)
     {
         await _userRepository.DeleteUser(id);
     }
 
-    public async Task UpdateUser(Guid id, UpdateUserRequest userRequest)
+    public async Task UpdateUser(string id, UpdateUserRequest userRequest)
     {
         await _userRepository.UpdateUser(id, userRequest);
     }
     
-    public async Task Deposit(Guid id, decimal amount,  string description)
+    public async Task Deposit(string id, decimal amount,  string description)
     {
         var user = await _userRepository.GetUserById(id);
-        
+
         if (user == null)
-            throw new Exception("User not found");
+            throw new UserNotFoundException();
 
         if (amount <= 0)
             throw new Exception("Invalid amount");
@@ -48,7 +47,7 @@ public class UserService : IUserService
         bankStatement.Description = description;
         bankStatement.ReceivedAmount = amount;
         bankStatement.TimeStamp = timeStamp;
-        bankStatement.UserId = id;
+        bankStatement.UserId = Guid.Parse(id);
 
         user.Balance += amount;
 
@@ -56,12 +55,12 @@ public class UserService : IUserService
         await _bankStatementRepository.DepositAction(bankStatement);
     }
     
-    public async Task Withdraw(Guid id, decimal amount, string description)
+    public async Task Withdraw(string id, decimal amount, string description)
     {
         var user = await _userRepository.GetUserById(id);
         
-        if (user == null) throw new Exception("User not found");
-
+        if (user == null) throw new UserNotFoundException();
+        
         if (amount <= 0) throw new Exception("Invalid amount");
 
         if (user.Balance < amount)
@@ -72,12 +71,54 @@ public class UserService : IUserService
         bankStatement.Description = description;
         bankStatement.SpentAmount = amount;
         bankStatement.TimeStamp = timeStamp;
-        bankStatement.UserId = id;
+        bankStatement.UserId = Guid.Parse(id);;
 
         user.Balance -= amount;
 
         await _userRepository.SaveChanges();
         await _bankStatementRepository.WithdrawAction(bankStatement);
+    }
+
+    public async Task<List<BankStatement>> GetStatementByDateRange(string userId, DateTime startDate, DateTime endDate)
+    {
+        if (startDate > endDate) throw new Exception("Start date must be earlier than end date.");
+        
+        return await _bankStatementRepository.GetStatementByDate(startDate, endDate, userId);
+    }
+
+    public async Task<decimal?> GetBalance(string id)
+    {
+        var user = await _userRepository.GetUserById(id);
+        if(user == null) throw new UserNotFoundException();
+        
+        return user.Balance;
+    }
+
+    public async Task Transfer(string id, string phoneNumber, decimal amount)
+    {
+        var user = await _userRepository.GetUserById(id);
+        if (user == null) throw new UserNotFoundException();
+        if (amount <= 0) throw new Exception("Invalid amount");
+        if (user.Balance < amount)
+            throw new Exception("Insufficient funds");
+        var receiverUser = await _userRepository.GetUserByPhoneNumber(phoneNumber);
+        if (receiverUser == null) throw new UserNotFoundException();
+        user.Balance = user.Balance -  amount;
+        receiverUser.Balance = receiverUser.Balance + amount;
+        
+        var bankStatementSender = new BankStatement();
+        bankStatementSender.SpentAmount = amount;
+        bankStatementSender.TimeStamp = DateTime.UtcNow;
+        bankStatementSender.UserId = Guid.Parse(id);
+        bankStatementSender.Description = $"The amount {amount} has been sent to {receiverUser.FirstName} {receiverUser.LastName}";
+        _bankStatementRepository.WithdrawAction(bankStatementSender);
+        
+        var bankStatementReceiver = new BankStatement();
+        bankStatementReceiver.ReceivedAmount = amount;
+        bankStatementReceiver.TimeStamp = DateTime.UtcNow;
+        bankStatementReceiver.UserId = receiverUser.ID;
+        bankStatementReceiver.Description = $"The amount {amount} has been received from {user.FirstName} {user.LastName}";
+        _bankStatementRepository.DepositAction(bankStatementReceiver);
     }
 
     public async Task<string> Login(LoginRequest userRequest)
