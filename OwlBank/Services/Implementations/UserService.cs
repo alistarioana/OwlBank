@@ -103,22 +103,6 @@ public class UserService : IUserService
             throw new Exception("Insufficient funds");
         var receiverUser = await _userRepository.GetUserByPhoneNumber(phoneNumber);
         if (receiverUser == null) throw new UserNotFoundException();
-        user.Balance = user.Balance -  amount;
-        receiverUser.Balance = receiverUser.Balance + amount;
-        
-        var bankStatementSender = new BankStatement();
-        bankStatementSender.SpentAmount = amount;
-        bankStatementSender.TimeStamp = DateTime.UtcNow;
-        bankStatementSender.UserId = Guid.Parse(id);
-        bankStatementSender.Description = $"The amount {amount} has been sent to {receiverUser.FirstName} {receiverUser.LastName}";
-        _bankStatementRepository.WithdrawAction(bankStatementSender);
-        
-        var bankStatementReceiver = new BankStatement();
-        bankStatementReceiver.ReceivedAmount = amount;
-        bankStatementReceiver.TimeStamp = DateTime.UtcNow;
-        bankStatementReceiver.UserId = receiverUser.ID;
-        bankStatementReceiver.Description = $"The amount {amount} has been received from {user.FirstName} {user.LastName}";
-        _bankStatementRepository.DepositAction(bankStatementReceiver);
     }
 
     public async Task<string> Login(LoginRequest userRequest)
