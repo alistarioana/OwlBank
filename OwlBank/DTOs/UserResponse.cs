@@ -1,3 +1,5 @@
+using OwlBank.Models;
+
 namespace OwlBank.DTOs.UserDTO;
 
 public class UserResponse
@@ -9,5 +11,8 @@ public class UserResponse
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? PhoneNumber { get; set; }
-    public DateTime? DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
+    public List<string> Roles { get; set; }
+    public List<CardResponse> Cards { get; set; }
+    
 }

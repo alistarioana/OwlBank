@@ -12,4 +12,6 @@ public interface IUserRepository
     public Task<User?> GetUserByEmail(string email);
     public Task SaveChanges();
     public Task<User?> GetUserByPhoneNumber(string phoneNumber);
+    public Task Update(User user);
+    public Task<Card> AddCard(Card card);
 }

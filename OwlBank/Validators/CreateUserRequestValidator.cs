@@ -7,7 +7,7 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 {
     public CreateUserRequestValidator()
     {
-        RuleFor(request => request.Username).NotEmpty().WithMessage("Username is required");
+        RuleFor(request => request.ConfirmPassword).NotEmpty().WithMessage("Password must be confirmed").MinimumLength(6);
         RuleFor(request => request.Password).NotEmpty().WithMessage("Password is required").MinimumLength(6);
         RuleFor(request => request.Email).NotEmpty().WithMessage("Email is required").EmailAddress().WithMessage("Invalid email address");
         RuleFor(request => request.FirstName).NotEmpty().WithMessage("First name is required");

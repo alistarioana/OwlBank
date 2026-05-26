@@ -36,7 +36,6 @@ public class UserRepository : IUserRepository
         if (userRequest.Email != null) updateUser.Email = userRequest.Email;
         if (userRequest.Password != null) updateUser.Password = userRequest.Password;
         if (userRequest.DateOfBirth != null) updateUser.DateOfBirth = userRequest.DateOfBirth;
-        if(userRequest.Username != null) updateUser.Username = userRequest.Username;
         if (userRequest.PhoneNumber != null) updateUser.PhoneNumber = userRequest.PhoneNumber;
         
         await _dbContext.SaveChangesAsync();
@@ -44,7 +43,7 @@ public class UserRepository : IUserRepository
     
     public async Task<User?> GetUserById(string id)
     {
-        return await _dbContext.Users.FindAsync(Guid.Parse(id));
+        return await _dbContext.Users.Include(u => u.Cards).FirstOrDefaultAsync(u => u.ID.ToString() == id);
     }
 
     public async Task<User?> GetUserByEmail(string email)
@@ -63,5 +62,17 @@ public class UserRepository : IUserRepository
     {
         var user =_dbContext.Users.Where(x => x.PhoneNumber == phoneNumber);
         return user.FirstOrDefaultAsync();
+    }
+    
+    public async Task Update(User user)
+    {
+        _dbContext.Users.Update(user);
+        await _dbContext.SaveChangesAsync();
+    }
+    public async Task<Card> AddCard(Card card)
+    {   
+        var addCard = await _dbContext.Cards.AddAsync(card);
+        await _dbContext.SaveChangesAsync();
+        return addCard.Entity;
     }
 }

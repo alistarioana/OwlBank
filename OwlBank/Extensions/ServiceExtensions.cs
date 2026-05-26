@@ -1,3 +1,4 @@
+using System.Reflection;
 using OwlBank.Repository;
 using OwlBank.Services;
 
@@ -14,6 +15,15 @@ public static class ServiceExtensions
       services.AddScoped<IAdminService, AdminService>();
       services.AddScoped<ILoginService, LoginService>();
       
+      //Culegi clasele care au Dependency attribute
+      // Foreach pe clasele alea
+      // 
+      
       return services;
    }
+}
+
+public class DependencyAttribute(Type type, ServiceLifetime lifetime = ServiceLifetime.Scoped) : Attribute
+{
+   
 }

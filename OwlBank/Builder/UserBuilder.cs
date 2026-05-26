@@ -31,15 +31,15 @@ public  class UserBuilder
         return this;
     }
 
-    public  UserBuilder SetDateOfBirth(DateTime? dateOfBirth)
+    public  UserBuilder SetDateOfBirth(DateOnly? dateOfBirth)
     {
         user.DateOfBirth = dateOfBirth;
         return this;
     }
 
-    public  UserBuilder SetBalance(decimal? balance)
+    public  UserBuilder SetConfirmationPassword(string? password)
     {
-        user.Balance = balance;
+        user.Password = password;
         return this;
     }
 
@@ -48,10 +48,5 @@ public  class UserBuilder
         user.Password = password;
         return this;
     }
-
-    public UserBuilder SetUserName(string? username)
-    {
-        user.Username = username;
-        return this;
-    }
+    
 }

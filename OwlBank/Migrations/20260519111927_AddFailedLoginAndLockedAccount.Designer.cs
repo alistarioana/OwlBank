@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OwlBank.Repository;
@@ -12,9 +13,11 @@ using OwlBank.Repository;
 namespace OwlBank.Migrations
 {
     [DbContext(typeof(OwlBankDBContext))]
-    partial class OwlBankDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260519111927_AddFailedLoginAndLockedAccount")]
+    partial class AddFailedLoginAndLockedAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,59 +54,24 @@ namespace OwlBank.Migrations
                     b.ToTable("BankStatement");
                 });
 
-            modelBuilder.Entity("OwlBank.Models.Card", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CVV")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CardNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Cards");
-                });
-
             modelBuilder.Entity("OwlBank.Models.User", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("AccountLocketAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<decimal?>("Balance")
                         .HasColumnType("numeric");
 
-                    b.Property<DateOnly?>("DateOfBirth")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("FailedLogin")
+                        .HasColumnType("integer");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
@@ -111,8 +79,8 @@ namespace OwlBank.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("text");
 
-                    b.Property<int>("LoginAttempt")
-                        .HasColumnType("integer");
+                    b.Property<DateTime?>("LockedAccount")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Password")
                         .HasColumnType("text");
@@ -123,6 +91,9 @@ namespace OwlBank.Migrations
                     b.PrimitiveCollection<List<string>>("UserRoles")
                         .IsRequired()
                         .HasColumnType("text[]");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
 
                     b.HasKey("ID");
 
@@ -141,22 +112,9 @@ namespace OwlBank.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("OwlBank.Models.Card", b =>
-                {
-                    b.HasOne("OwlBank.Models.User", "User")
-                        .WithMany("Cards")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("OwlBank.Models.User", b =>
                 {
                     b.Navigation("BankStatement");
-
-                    b.Navigation("Cards");
                 });
 #pragma warning restore 612, 618
         }

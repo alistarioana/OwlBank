@@ -23,23 +23,43 @@ public class LoginService : ILoginService
         var user = await _userRepository.GetUserByEmail(userRequest.Email);
         if (user == null)
         {
-            throw new Exception($"No User with given email: {user.Email} registered.");
+            throw new Exception($"No user with email: {userRequest.Email} registered.");
         }
         
-        if (!BCrypt.Net.BCrypt.Verify(userRequest.Password, user.Password))
+        bool passwordValid = BCrypt.Net.BCrypt.Verify(userRequest.Password, user.Password);
+
+        if (!passwordValid)
         {
-            throw new AuthenticationException("Invalid password");
+            if (user.AccountLocketAt?.AddMinutes(30) <= DateTime.UtcNow)
+            {
+                user.LoginAttempt = 0;
+                user.AccountLocketAt = null;
+            }
+            
+            if (user.LoginAttempt >= 3)
+            {
+                user.AccountLocketAt = DateTime.UtcNow;
+                
+                await _userRepository.Update(user);
+                throw new Exception($"Your account has been locked.");
+            }
+            
+            user.LoginAttempt++;
+            
+            await _userRepository.Update(user);
+
+            throw new AuthenticationException($"Wrong password. Attempt {user.LoginAttempt} / 3");
         }
+
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-            new Claim(ClaimTypes.Email, user.Email)
+            new Claim("User Id", user.ID.ToString()),
+            new Claim("Email", user.Email)
         };
 
         foreach (var role in user.UserRoles)
         {
-            claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+            claims.Add(new Claim("Roles", role.ToString()));
         }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("rkjlngbaekj-jRNVWKrnb-ekfrjnvoern"));
@@ -65,14 +85,53 @@ public class LoginService : ILoginService
         User create = new UserBuilder()
                 .SetFirstName(userRequest.FirstName)
                 .SetLastName(userRequest.LastName)
-                .SetBalance(userRequest.Balance)
                 .SetEmail(userRequest.Email)
                 .SetDateOfBirth(userRequest.DateOfBirth)
                 .SetPhoneNumber(userRequest.PhoneNumber)
                 .SetPassword(userRequest.Password)
-                .SetUserName(userRequest.Username)
+                .SetConfirmationPassword(userRequest.Password)
                 .Build();
 
-            await _userRepository.AddUser(create);
+        
+        Random random = new Random();
+        Card card = new Card();
+        card.FirstName = userRequest.FirstName;
+        card.LastName = userRequest.LastName;
+        card.CardNumber = string.Concat(Enumerable.Range(0, 16)
+            .Select(_ => random.Next(0, 10)));
+        card.CVV = string.Concat(Enumerable.Range(0, 3)
+            .Select(_ => random.Next(0, 9)));
+        card.ExpirationDate = DateTime.UtcNow.AddYears(10);
+        
+        create.Cards.Add(card);
+        
+        await _userRepository.AddUser(create);
+            
+    }
+
+    public async Task ResetPassword(string email, string password, string newpassword, string confirmPassword)
+    {
+        var user = await _userRepository.GetUserByEmail(email);
+        if (user == null)
+        {
+            throw new Exception($"No user with email: {email} found.");
+        }
+
+        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+        {
+            throw new Exception("Invalid password");
+        }
+
+        if (newpassword != confirmPassword)
+        {
+            throw new Exception("Passwords does not match");
+        }
+
+        if (BCrypt.Net.BCrypt.Verify(newpassword,user.Password))
+        {
+            throw new Exception("Passwords cannot be set as the old password.");
+        }
+        user.Password =BCrypt.Net.BCrypt.HashPassword(newpassword);
+        await _userRepository.Update(user);
     }
 }

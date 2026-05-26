@@ -2,6 +2,7 @@ using OwlBank.Models;
 
 namespace OwlBank.Repository;
 
+[Dependency(typeof(IBankStatementRepository))]
 public class BankStatementRepository : IBankStatementRepository
 {
     private readonly OwlBankDBContext _context;
@@ -38,5 +39,12 @@ public class BankStatementRepository : IBankStatementRepository
             .Where(x => x.UserId.ToString() == userId && x.TimeStamp >= startDate && x.TimeStamp <= endDate);
         
         return statement.ToList();
+    }
+
+    public async Task<List<BankStatement>> ReceivedDetails(string userId, string name)
+    {
+       return _context.BankStatement
+            .Where(x => x.UserId.ToString() == userId)
+            .Where(x => x.Description.ToLower().Contains(name.ToLower())).ToList();
     }
 }

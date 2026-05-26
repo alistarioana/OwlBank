@@ -23,4 +23,22 @@ public class AdminController : ControllerBase
     {
         return await _service.GetUsers();
     }
+
+    [HttpPost("roles")]
+    public async Task UpdateRole(string id, List<string> roles)
+    {
+        await _service.UpdateUserRole(id, roles);
+    }
+
+    [HttpPatch("reset-password/{id}")]
+    public async Task UpdatePassword([FromRoute] string id)
+    {
+        await _service.UpdatePassword(id);
+    }
+
+    [HttpDelete("delete-user/{userId}")]
+    public async Task DeleteUser([FromRoute] string userId)
+    {
+        await _service.DeleteUser(userId);
+    }
 }

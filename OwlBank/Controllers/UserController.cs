@@ -20,54 +20,51 @@ public class UserController : ControllerBase
         }
         
         [HttpPost("deposit")]
-        public async Task<IActionResult> Deposit( [FromQuery]DepositBalanceRequest dto)
+        public async Task Deposit([FromQuery] DepositBalanceRequest dto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             await _service.Deposit(userId, dto.Amount, dto.Description);
-            return Ok();
         }
 
         [HttpPost("withdraw")]
-        public async Task<IActionResult> Withdraw([FromQuery]WithdrawBalanceRequest dto)
+        public async Task Withdraw([FromQuery] WithdrawBalanceRequest dto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             await _service.Withdraw(userId, dto.Amount, dto.Description);
-            return Ok();
         }
 
         [HttpGet("statement")]
-        public async Task<IActionResult> GetStatement([FromQuery]DateTime startDate, [FromQuery]DateTime endDate)
+        public async Task<List<BankStatement>> GetStatement([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         { 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             var statement = await _service.GetStatementByDateRange(userId, startDate, endDate);
-            return Ok(statement);
+            return statement;
         }
 
         [HttpGet("balance")]
-        public async Task<IActionResult> GetBalance()
+        public async Task<decimal?> GetBalance()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             var balance = await _service.GetBalance(userId);
             
-            return Ok(balance);
+            return balance;
         }
 
-        [HttpPost("transfer")]
-        public async Task<IActionResult> Transfer(string phoneNumber, decimal amount)
+        [HttpPost("transfer/{phoneNumber}")]
+        public async Task Transfer([FromRoute] string phoneNumber,[FromQuery] decimal amount)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
-            
+
             await _service.Transfer(userId, phoneNumber, amount);
-            return Ok();
         }
         
         [HttpDelete]
@@ -80,11 +77,61 @@ public class UserController : ControllerBase
         }
 
         [HttpPatch]
-        public async Task UpdateUser( UpdateUserRequest userRequest)
+        public async Task UpdateUser(UpdateUserRequest userRequest)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             await _service.UpdateUser(userId, userRequest);
+        }
+        
+        [HttpPatch("reset")]
+        public async Task ResetPassword([FromQuery] string email, [FromQuery] string password,
+            [FromQuery] string newPassword, [FromQuery] string confirmPassword)
+        {
+            await _service.ResetPassword(email, password, newPassword, confirmPassword);
+        }
+
+        [HttpGet("user-details")]
+        public async Task<UserDetailsResponse> GetUserDetails()
+        { 
+            var userId = User.FindFirst("User Id")?.Value;
+            if (userId == null) throw new UnauthorizedAccessException();
+            
+            var user = await _service.GetUserDetails(userId);
+
+            return user;
+        }
+
+        [HttpGet("transfer-details/{name}")]
+
+        public async Task<List<BankStatement>>GetTransferDetail([FromRoute] string name)
+        {
+            var userId = User.FindFirst("User Id")?.Value;
+            var user = await _service.TransferDetails(userId, name);
+            return user;
+        }
+
+        [HttpGet("contact-details")]
+        public async Task<ContactDetailsResponse> GetContactDetails()
+        {
+            var userId = User.FindFirst("User Id")?.Value;
+            var response = await _service.GetContactDetails(userId);
+            return response;
+        }
+
+        [HttpGet("card-details")]
+        public async Task<CardDetailsResponse> ShowCardDetails(string password, string cardID)
+        {
+            var userId = User.FindFirst("User Id")?.Value;
+            var card = _service.ShowCardDetails(userId, password, cardID);
+            return await card;
+        }
+
+        [HttpPost("add-cards")]
+        public async Task<AddCardsResponse> AddCards()
+        {
+            var userId = User.FindFirst("User Id")?.Value;
+            return await _service.AddCard(userId);
         }
 }

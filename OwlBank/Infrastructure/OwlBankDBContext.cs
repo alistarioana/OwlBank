@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OwlBank.Models;
 using System.Text.Json;
+using OwlBank.DTOs.UserDTO;
 
 namespace OwlBank.Repository;
 
@@ -10,6 +11,7 @@ public class OwlBankDBContext : DbContext
     
     public DbSet<User> Users { get; set; }
     
+    public DbSet<Card> Cards { get; set; }
     public DbSet<BankStatement> BankStatement { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -17,10 +17,10 @@ public static class AuthExtensions
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                        Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+                    RoleClaimType = "Roles"
                 };
             });
-        
         services.AddAuthorization();
         
         return services;
