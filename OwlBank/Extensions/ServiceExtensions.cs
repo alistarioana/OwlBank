@@ -15,10 +15,6 @@ public static class ServiceExtensions
       services.AddScoped<IAdminService, AdminService>();
       services.AddScoped<ILoginService, LoginService>();
       
-      //Culegi clasele care au Dependency attribute
-      // Foreach pe clasele alea
-      // 
-      
       return services;
    }
 }

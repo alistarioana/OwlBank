@@ -22,7 +22,7 @@ public class AdminService : IAdminService
             {
                 FirstName = x.FirstName,
                 LastName = x.LastName,
-                DateOfBirth = x.DateOfBirth,
+                DateOfBirth = DateOnly.FromDateTime(x.DateOfBirth.Value),
                 Email = x.Email,
                 PhoneNumber =  x.PhoneNumber,
                 Password = x.Password,

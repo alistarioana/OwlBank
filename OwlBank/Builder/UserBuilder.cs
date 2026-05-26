@@ -31,9 +31,12 @@ public  class UserBuilder
         return this;
     }
 
-    public  UserBuilder SetDateOfBirth(DateOnly? dateOfBirth)
+    public  UserBuilder SetDateOfBirth(DateOnly dateOfBirth)
     {
-        user.DateOfBirth = dateOfBirth;
+        DateOnly dateOnly = new DateOnly(dateOfBirth.Year, dateOfBirth.Month, dateOfBirth.Day);
+    
+        DateTime dateTime = dateOnly.ToDateTime(TimeOnly.MinValue);
+        user.DateOfBirth = dateTime;
         return this;
     }
 

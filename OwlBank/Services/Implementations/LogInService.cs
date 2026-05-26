@@ -23,7 +23,7 @@ public class LoginService : ILoginService
         var user = await _userRepository.GetUserByEmail(userRequest.Email);
         if (user == null)
         {
-            throw new Exception($"No user with email: {userRequest.Email} registered.");
+            throw new Exception($"No user with email {userRequest.Email} registered.");
         }
         
         bool passwordValid = BCrypt.Net.BCrypt.Verify(userRequest.Password, user.Password);
@@ -81,12 +81,15 @@ public class LoginService : ILoginService
         {
             throw new Exception("Email already exists");
         }
+        DateOnly dateOnly = new DateOnly(userRequest.DateOfBirth.Value.Year, userRequest.DateOfBirth.Value.Month, userRequest.DateOfBirth.Value.Day);
+
+        DateTime dateTime = dateOnly.ToDateTime(TimeOnly.MinValue);
         
         User create = new UserBuilder()
                 .SetFirstName(userRequest.FirstName)
                 .SetLastName(userRequest.LastName)
                 .SetEmail(userRequest.Email)
-                .SetDateOfBirth(userRequest.DateOfBirth)
+                .SetDateOfBirth(dateOnly)
                 .SetPhoneNumber(userRequest.PhoneNumber)
                 .SetPassword(userRequest.Password)
                 .SetConfirmationPassword(userRequest.Password)

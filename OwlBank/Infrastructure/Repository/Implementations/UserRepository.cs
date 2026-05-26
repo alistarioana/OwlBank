@@ -35,7 +35,6 @@ public class UserRepository : IUserRepository
         if (userRequest.LastName != null) updateUser.LastName = userRequest.LastName;
         if (userRequest.Email != null) updateUser.Email = userRequest.Email;
         if (userRequest.Password != null) updateUser.Password = userRequest.Password;
-        if (userRequest.DateOfBirth != null) updateUser.DateOfBirth = userRequest.DateOfBirth;
         if (userRequest.PhoneNumber != null) updateUser.PhoneNumber = userRequest.PhoneNumber;
         
         await _dbContext.SaveChangesAsync();
