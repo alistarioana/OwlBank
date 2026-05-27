@@ -83,13 +83,13 @@ public class LoginService : ILoginService
         }
         DateOnly dateOnly = new DateOnly(userRequest.DateOfBirth.Value.Year, userRequest.DateOfBirth.Value.Month, userRequest.DateOfBirth.Value.Day);
 
-        DateTime dateTime = dateOnly.ToDateTime(TimeOnly.MinValue);
+        DateTime dateTime = dateOnly.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
         
         User create = new UserBuilder()
                 .SetFirstName(userRequest.FirstName)
                 .SetLastName(userRequest.LastName)
                 .SetEmail(userRequest.Email)
-                .SetDateOfBirth(dateOnly)
+                .SetDateOfBirth(dateTime)
                 .SetPhoneNumber(userRequest.PhoneNumber)
                 .SetPassword(userRequest.Password)
                 .SetConfirmationPassword(userRequest.Password)

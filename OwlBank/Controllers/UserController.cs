@@ -134,4 +134,26 @@ public class UserController : ControllerBase
             var userId = User.FindFirst("User Id")?.Value;
             return await _service.AddCard(userId);
         }
+
+        [HttpPost("delete-cards")]
+
+        public async Task DeleteCards([FromQuery] string cardId)
+        {
+            var userId = User.FindFirst("User Id")?.Value; 
+            await _service.DeleteCard(cardId, userId);
+        }
+
+        [HttpPatch("blocked-cards/{cardId}")]
+        public async Task BlockedCards([FromRoute] string cardId)
+        {
+            var userId = User.FindFirst("User Id")?.Value;
+            await _service.BlockCard(cardId, userId);
+        }
+
+        [HttpPatch("activate-cards/{cardId}")]
+        public async Task ActivateCard([FromRoute] string cardId)
+        {
+            var userId = User.FindFirst("User Id")?.Value;
+            await _service.ActivateCard(cardId, userId);
+        }
 }

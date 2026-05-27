@@ -14,12 +14,14 @@ using OwlBank.Models;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly ICardRepository _cardRepository;
     private readonly IBankStatementRepository _bankStatementRepository;
 
-    public UserService(IUserRepository userRepository, IBankStatementRepository bankStatementRepository)
+    public UserService(IUserRepository userRepository, IBankStatementRepository bankStatementRepository,  ICardRepository cardRepository)
     {
         _userRepository = userRepository;
         _bankStatementRepository = bankStatementRepository;
+        _cardRepository = cardRepository;
     }
 
     public async Task DeleteUser(string id)
@@ -172,7 +174,9 @@ public class UserService : IUserService
             {
                 FirstName = x.FirstName,
                 LastName = x.LastName,
-                LastFourDigitsCardNumber = MapCardNumber(x.CardNumber)
+                LastFourDigitsCardNumber = MapCardNumber(x.CardNumber),
+                CardId = x.Id,
+                IsBlocked = x.IsBlocked
             }).ToList()
         };
     }
@@ -263,5 +267,44 @@ public class UserService : IUserService
         cardResponse.Name = card.FirstName + " " + card.LastName;
         
         return cardResponse;
+    }
+
+    public async Task DeleteCard(string cardId, string userId)
+    {
+        var user = await _userRepository.GetUserById(userId);
+        var card = user.Cards.Where(x => x.Id.ToString() == cardId).FirstOrDefault();
+        if (card == null)
+        {
+            throw new Exception("Card not found.");
+        }
+        await _userRepository.DeleteCard(card);
+    }
+
+    public async Task BlockCard(string cardId, string userId)
+    {
+        var cards = await _cardRepository.GetCards();
+        var card = cards?.Where(x => x.Id.ToString() == cardId && x.UserId.ToString() == userId).FirstOrDefault();
+
+        if (card == null)
+        {
+            throw new Exception("Card not found");
+        }
+
+        card.IsBlocked = true;
+        
+        await _cardRepository.SaveChanges();
+    }
+
+    public async Task ActivateCard(string cardId, string userId)
+    {
+        var cards = await _cardRepository.GetCards();
+        var card = cards?.Where(x => x.Id.ToString() == cardId && x.UserId.ToString() == userId).FirstOrDefault();
+        if (card == null)
+        {
+            throw new Exception("Card not found");
+        }
+        
+        card.IsBlocked = false;
+        await _cardRepository.SaveChanges();
     }
 }

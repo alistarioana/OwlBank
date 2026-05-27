@@ -20,4 +20,7 @@ public interface IUserService
     public Task<ContactDetailsResponse> GetContactDetails(string id);
     public Task<CardDetailsResponse> ShowCardDetails(string id, string password, string cardID);
     public Task<AddCardsResponse> AddCard(string userId);
+    public Task DeleteCard(string cardId, string userId);
+    public Task BlockCard(string cardId, string userId);
+    public Task ActivateCard(string cardId, string userId);
 }

@@ -74,4 +74,10 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
         return addCard.Entity;
     }
+
+    public async Task DeleteCard(Card card)
+    {
+        _dbContext.Cards.Remove(card);
+        await _dbContext.SaveChangesAsync();
+    }
 }

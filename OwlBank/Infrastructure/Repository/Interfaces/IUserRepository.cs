@@ -14,4 +14,5 @@ public interface IUserRepository
     public Task<User?> GetUserByPhoneNumber(string phoneNumber);
     public Task Update(User user);
     public Task<Card> AddCard(Card card);
+    public Task DeleteCard(Card card);
 }

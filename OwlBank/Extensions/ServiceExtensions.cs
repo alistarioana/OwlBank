@@ -14,6 +14,7 @@ public static class ServiceExtensions
       services.AddScoped<IUserService, UserService>();
       services.AddScoped<IAdminService, AdminService>();
       services.AddScoped<ILoginService, LoginService>();
+      services.AddScoped<ICardRepository, CardRepository>();
       
       return services;
    }
