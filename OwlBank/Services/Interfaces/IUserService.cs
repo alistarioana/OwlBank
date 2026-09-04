@@ -12,7 +12,7 @@ public interface IUserService
     public Task Deposit(string id, decimal amount, string description);
     public Task Withdraw(string id, decimal amount, string description);
     public Task<List<BankStatement>> GetStatementByDateRange(string userId, DateTime startDate, DateTime endDate);
-    public Task<decimal?> GetBalance(string id);
+    public Task<decimal> GetBalance(string id);
     public Task Transfer(string id, string phoneNumber, decimal amount);
     public Task ResetPassword(string email, string password, string newpassword, string confirmPassword);
     public Task<UserDetailsResponse> GetUserDetails(string userId);
@@ -23,4 +23,6 @@ public interface IUserService
     public Task DeleteCard(string cardId, string userId);
     public Task BlockCard(string cardId, string userId);
     public Task ActivateCard(string cardId, string userId);
+
+    public Task<List<Transaction>> GetTransactionsAsync(string userId);
 }

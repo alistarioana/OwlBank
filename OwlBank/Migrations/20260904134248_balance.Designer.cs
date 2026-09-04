@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OwlBank.Repository;
@@ -12,9 +13,11 @@ using OwlBank.Repository;
 namespace OwlBank.Migrations
 {
     [DbContext(typeof(OwlBankDBContext))]
-    partial class OwlBankDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260904134248_balance")]
+    partial class balance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

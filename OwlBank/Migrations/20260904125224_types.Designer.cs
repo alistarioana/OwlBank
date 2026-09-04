@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OwlBank.Repository;
@@ -12,9 +13,11 @@ using OwlBank.Repository;
 namespace OwlBank.Migrations
 {
     [DbContext(typeof(OwlBankDBContext))]
-    partial class OwlBankDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260904125224_types")]
+    partial class types
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,9 +113,8 @@ namespace OwlBank.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("UserID")
                         .HasColumnType("uuid");
@@ -133,7 +135,7 @@ namespace OwlBank.Migrations
                     b.Property<DateTime?>("AccountLocketAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal>("Balance")
+                    b.Property<decimal?>("Balance")
                         .HasColumnType("numeric");
 
                     b.Property<DateTime?>("DateOfBirth")

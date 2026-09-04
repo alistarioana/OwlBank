@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OwlBank.Repository;
@@ -12,9 +13,11 @@ using OwlBank.Repository;
 namespace OwlBank.Migrations
 {
     [DbContext(typeof(OwlBankDBContext))]
-    partial class OwlBankDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260827132927_addSomnthing")]
+    partial class addSomnthing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,9 +46,6 @@ namespace OwlBank.Migrations
 
                     b.Property<decimal>("TransferAmount")
                         .HasColumnType("numeric");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
@@ -104,22 +104,15 @@ namespace OwlBank.Migrations
                     b.Property<decimal?>("Amount")
                         .HasColumnType("numeric");
 
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
+                    b.Property<string>("Details")
                         .HasColumnType("text");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("UserID")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Transaction");
                 });
@@ -133,7 +126,7 @@ namespace OwlBank.Migrations
                     b.Property<DateTime?>("AccountLocketAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal>("Balance")
+                    b.Property<decimal?>("Balance")
                         .HasColumnType("numeric");
 
                     b.Property<DateTime?>("DateOfBirth")
@@ -194,7 +187,7 @@ namespace OwlBank.Migrations
                 {
                     b.HasOne("OwlBank.Models.User", null)
                         .WithMany("Transactions")
-                        .HasForeignKey("UserID");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("OwlBank.Models.User", b =>

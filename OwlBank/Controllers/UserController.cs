@@ -22,7 +22,7 @@ public class UserController : ControllerBase
         [HttpPost("deposit")]
         public async Task Deposit([FromQuery] DepositBalanceRequest dto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             await _service.Deposit(userId, dto.Amount, dto.Description);
@@ -31,7 +31,7 @@ public class UserController : ControllerBase
         [HttpPost("withdraw")]
         public async Task Withdraw([FromQuery] WithdrawBalanceRequest dto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             await _service.Withdraw(userId, dto.Amount, dto.Description);
@@ -40,7 +40,7 @@ public class UserController : ControllerBase
         [HttpGet("statement")]
         public async Task<List<BankStatement>> GetStatement([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         { 
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             var statement = await _service.GetStatementByDateRange(userId, startDate, endDate);
@@ -48,9 +48,9 @@ public class UserController : ControllerBase
         }
 
         [HttpGet("balance")]
-        public async Task<decimal?> GetBalance()
+        public async Task<decimal> GetBalance()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             var balance = await _service.GetBalance(userId);
@@ -61,7 +61,7 @@ public class UserController : ControllerBase
         [HttpPost("transfer/{phoneNumber}")]
         public async Task Transfer([FromRoute] string phoneNumber,[FromQuery] decimal amount)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
 
             await _service.Transfer(userId, phoneNumber, amount);
@@ -70,7 +70,7 @@ public class UserController : ControllerBase
         [HttpDelete]
         public async Task DeleteUser()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             await _service.DeleteUser(userId);
@@ -79,7 +79,7 @@ public class UserController : ControllerBase
         [HttpPatch]
         public async Task UpdateUser(UpdateUserRequest userRequest)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+          var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             await _service.UpdateUser(userId, userRequest);
@@ -156,4 +156,11 @@ public class UserController : ControllerBase
             var userId = User.FindFirst("User Id")?.Value;
             await _service.ActivateCard(cardId, userId);
         }
+        [HttpGet("transactions")]
+        public async Task<List<Transaction>> GetTransactions()
+        {
+            var userId = User.FindFirst("User Id")?.Value;
+           return  await _service.GetTransactionsAsync(userId);
+        }
+
 }

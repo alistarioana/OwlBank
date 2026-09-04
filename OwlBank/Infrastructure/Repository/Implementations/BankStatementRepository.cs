@@ -17,7 +17,12 @@ public class BankStatementRepository : IBankStatementRepository
         _context.SaveChanges();
         return Task.CompletedTask;
     }
-
+    public Task TransferAction(BankStatement bankStatement)
+    {
+        _context.BankStatement.Add(bankStatement);
+        _context.SaveChanges();
+        return Task.CompletedTask;
+    }
     public Task WithdrawAction(BankStatement bankStatement)
     {
         _context.BankStatement.Add(bankStatement);
@@ -46,5 +51,10 @@ public class BankStatementRepository : IBankStatementRepository
        return _context.BankStatement
             .Where(x => x.UserId.ToString() == userId)
             .Where(x => x.Description.ToLower().Contains(name.ToLower())).ToList();
+    }
+
+    public async Task<List<BankStatement>> GetAllStatements(string userId)
+    {
+        return _context.BankStatement.Where(x => x.UserId.ToString() == userId).ToList();
     }
 }

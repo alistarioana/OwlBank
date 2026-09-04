@@ -50,7 +50,8 @@ public class UserService : IUserService
         bankStatement.ReceivedAmount = amount;
         bankStatement.TimeStamp = timeStamp;
         bankStatement.UserId = Guid.Parse(id);
-
+        bankStatement.TransferAmount = amount;
+        bankStatement.Type = Types.deposit;
         user.Balance += amount;
 
         await _userRepository.SaveChanges();
@@ -73,7 +74,9 @@ public class UserService : IUserService
         bankStatement.Description = description;
         bankStatement.SpentAmount = amount;
         bankStatement.TimeStamp = timeStamp;
-        bankStatement.UserId = Guid.Parse(id);;
+        bankStatement.UserId = Guid.Parse(id);
+        bankStatement.TransferAmount = -amount ;
+        bankStatement.Type = Types.withdrawal;
 
         user.Balance -= amount;
 
@@ -88,7 +91,7 @@ public class UserService : IUserService
         return await _bankStatementRepository.GetStatementByDate(startDate, endDate, userId);
     }
 
-    public async Task<decimal?> GetBalance(string id)
+    public async Task<decimal> GetBalance(string id)
     {
         var user = await _userRepository.GetUserById(id);
         if(user == null) throw new UserNotFoundException();
@@ -105,6 +108,19 @@ public class UserService : IUserService
             throw new Exception("Insufficient funds");
         var receiverUser = await _userRepository.GetUserByPhoneNumber(phoneNumber);
         if (receiverUser == null) throw new UserNotFoundException();
+
+        BankStatement bankStatement = new BankStatement();
+        
+        bankStatement.ReceivedAmount = amount;
+        bankStatement.TimeStamp = DateTime.Now;
+        bankStatement.UserId = Guid.Parse(id);
+        bankStatement.TransferAmount = amount;
+        bankStatement.Type = Types.transfer;
+        bankStatement.Description = $"Transfer amount from {phoneNumber} with amount of {amount}";
+        user.Balance += amount;
+
+        await _userRepository.SaveChanges();
+        await _bankStatementRepository.TransferAction(bankStatement);
     }
 
     public async Task<string> Login(LoginRequest userRequest)
@@ -306,5 +322,21 @@ public class UserService : IUserService
         
         card.IsBlocked = false;
         await _cardRepository.SaveChanges();
+    }
+
+    public async Task<List<Transaction>> GetTransactionsAsync(string userId)
+    {
+
+        var rez = await _bankStatementRepository.GetAllStatements(userId);
+        return rez.Select(x => new Transaction
+        {
+            Id =x.Id,
+            Amount = x.TransferAmount,
+            Description = x.Description,
+            Date=x.TimeStamp,
+            Type=x.Type.ToString()
+        }).ToList();
+
+
     }
 }
