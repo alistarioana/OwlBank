@@ -5,6 +5,7 @@ using OwlBank.DTOs.UserDTO;
 using OwlBank.Repository;
 using OwlBank.Models;
 
+[Dependency(typeof(IAdminService))]
 public class AdminService : IAdminService
 {
         private readonly IAdminRepository _db;

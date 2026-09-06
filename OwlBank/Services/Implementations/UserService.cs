@@ -11,6 +11,7 @@ namespace OwlBank.Services;
 using OwlBank.Repository;
 using OwlBank.Models;
 
+[Dependency(typeof(IUserService))]
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;

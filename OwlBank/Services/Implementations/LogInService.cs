@@ -10,6 +10,7 @@ using OwlBank.Repository;
 
 namespace OwlBank.Services;
 
+[Dependency(typeof(ILoginService))]
 public class LoginService : ILoginService
 {
     private readonly IUserRepository _userRepository;

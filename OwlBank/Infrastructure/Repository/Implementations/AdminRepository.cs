@@ -4,6 +4,7 @@ using OwlBank.Exceptions;
 namespace OwlBank.Repository;
 using OwlBank.Models;
 
+[Dependency(typeof(IAdminRepository))]
 public class AdminRepository : IAdminRepository
 {
     private readonly OwlBankDBContext _dbContext;

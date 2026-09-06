@@ -4,6 +4,7 @@ using OwlBank.Models;
 
 namespace OwlBank.Repository;
 
+[Dependency(typeof(IUserRepository))]
 public class UserRepository : IUserRepository
 {
     private readonly OwlBankDBContext _dbContext;

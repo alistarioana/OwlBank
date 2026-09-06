@@ -3,6 +3,7 @@ using OwlBank.Models;
 namespace OwlBank.Repository;
 
 [Dependency(typeof(IBankStatementRepository))]
+
 public class BankStatementRepository : IBankStatementRepository
 {
     private readonly OwlBankDBContext _context;

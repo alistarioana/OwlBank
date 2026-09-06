@@ -3,7 +3,9 @@ using OwlBank.Models;
 
 namespace OwlBank.Repository;
 
-public class CardRepository : ICardRepository
+[Dependency(typeof(ICardRepository))]
+
+public class CardRepository: ICardRepository
 { 
     private readonly OwlBankDBContext _dbContext;
     
@@ -11,7 +13,6 @@ public class CardRepository : ICardRepository
     {
         _dbContext = dbContext;
     }
-
 
     public async Task SaveChanges()
     {
