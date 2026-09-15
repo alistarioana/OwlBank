@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace OwlBank.Models;
 
 public class Card
@@ -11,4 +13,7 @@ public class Card
     public User User { get; set; }
     public Guid UserId { get; set; }
     public bool IsBlocked { get; set; }
+
+    [NotMapped]
+    public bool isActive => !IsBlocked && ExpirationDate > DateTime.UtcNow;
 }

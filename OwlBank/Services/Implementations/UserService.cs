@@ -141,7 +141,7 @@ public class UserService : IUserService
 
        var token = new JwtSecurityToken(
            claims: claims,
-           expires: DateTime.Now.AddHours(1),
+           expires: DateTime.Now.AddDays(2),/// aici tre sa pun 5 h sau sa pun days
            signingCredentials: creds
        );
 
@@ -275,7 +275,7 @@ public class UserService : IUserService
         cardResponse.CardNumber = card.CardNumber;
         cardResponse.ExpirationDate = DateOnly.FromDateTime(card.ExpirationDate).ToString("MM/yyyy");
 
-        var expire = cardResponse.ExpirationDate.Split("/");
+        var expire = cardResponse.ExpirationDate.Split(".");
         
         expire[1] = expire[1].Substring(2);
         
@@ -339,5 +339,20 @@ public class UserService : IUserService
         }).ToList();
 
 
+    }
+    public async Task<List<Card>> GetAllCardsAsync(string userId)
+    {
+        var cards = await _cardRepository.GetCards();
+     return cards.Where(x => x.UserId.ToString() == userId && x.isActive).Select(x => new Card
+        {
+            Id = x.Id,
+            FirstName = x.FirstName,
+            ExpirationDate = x.ExpirationDate,
+            CVV = x.CVV,
+            CardNumber = x.CardNumber,
+            UserId = x.UserId,
+            IsBlocked = x.IsBlocked
+
+        }).ToList();
     }
 }

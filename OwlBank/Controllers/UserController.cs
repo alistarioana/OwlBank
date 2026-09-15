@@ -163,4 +163,14 @@ public class UserController : ControllerBase
            return  await _service.GetTransactionsAsync(userId);
         }
 
+        [HttpGet("get-all-cards")]
+        public async Task<List<Card>> GetAllCards()
+        {
+            var userId = User.FindFirst("User Id")?.Value.ToString();
+       /* if (string.IsNullOrEmpty(userId))
+        {
+            return new List<Card>();
+        }*/
+         return await _service.GetAllCardsAsync(userId);
+        }
 }

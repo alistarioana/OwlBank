@@ -25,4 +25,6 @@ public interface IUserService
     public Task ActivateCard(string cardId, string userId);
 
     public Task<List<Transaction>> GetTransactionsAsync(string userId);
+
+    public Task<List<Card>> GetAllCardsAsync(string userId);
 }
