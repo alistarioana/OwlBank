@@ -243,9 +243,9 @@ public class UserService : IUserService
         card.CVV = userCard.CVV;
         card.ExpirationDate = DateOnly.FromDateTime(userCard.ExpirationDate).ToString("MM/yyyy");
 
-        var expire = card.ExpirationDate.Split("/");
+        var expire = card.ExpirationDate.Split(".");
         
-        expire[1] = expire[1].Substring(2);
+        expire[1] = expire[1].Substring(0);
         
         card.ExpirationDate = string.Join("/", expire); 
         
@@ -347,8 +347,6 @@ public class UserService : IUserService
         {
             Id = x.Id,
             FirstName = x.FirstName,
-            ExpirationDate = x.ExpirationDate,
-            CVV = x.CVV,
             CardNumber = x.CardNumber,
             UserId = x.UserId,
             IsBlocked = x.IsBlocked
