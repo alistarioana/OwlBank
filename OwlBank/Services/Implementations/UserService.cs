@@ -349,6 +349,7 @@ public class UserService : IUserService
         {
             Id = x.Id,
             FirstName = x.FirstName,
+            LastName=x.LastName,
             CardNumber = x.CardNumber,
             UserId = x.UserId,
             IsBlocked = x.IsBlocked
