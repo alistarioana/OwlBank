@@ -187,6 +187,8 @@ public class UserService : IUserService
             FirstName = user.FirstName,
             LastName = user.LastName,
             PhoneNumber = user.PhoneNumber,
+            DateOfBirth = user.DateOfBirth,
+            password = user.Password?.Replace(user.Password, "**********"),
             Cards = user.Cards.Select(x => new CardResponse
             {
                 FirstName = x.FirstName,
@@ -350,6 +352,7 @@ public class UserService : IUserService
             CardNumber = x.CardNumber,
             UserId = x.UserId,
             IsBlocked = x.IsBlocked
+    
 
         }).ToList();
     }

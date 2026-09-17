@@ -14,6 +14,7 @@ public class Card
     public Guid UserId { get; set; }
     public bool IsBlocked { get; set; }
 
+
     [NotMapped]
     public bool isActive => !IsBlocked && ExpirationDate > DateTime.UtcNow;
 }

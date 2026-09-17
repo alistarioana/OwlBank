@@ -8,6 +8,9 @@ public class UserDetailsResponse
     public string? LastName { get; set; }
     public string? PhoneNumber { get; set; }
     public decimal? Balance { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+
+    public string? password { get; set; }
     public List<CardResponse>? Cards { get; set; } = [];
 
 }

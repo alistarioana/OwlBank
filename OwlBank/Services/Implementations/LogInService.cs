@@ -29,6 +29,7 @@ public class LoginService : ILoginService
         
         bool passwordValid = BCrypt.Net.BCrypt.Verify(userRequest.Password, user.Password);
 
+
         if (!passwordValid)
         {
             if (user.AccountLocketAt?.AddMinutes(30) <= DateTime.UtcNow)
