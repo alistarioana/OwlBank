@@ -113,7 +113,7 @@ public class UserService : IUserService
         BankStatement bankStatement = new BankStatement();
         
         bankStatement.ReceivedAmount = amount;
-        bankStatement.TimeStamp = DateTime.Now;
+        bankStatement.TimeStamp = DateTime.UtcNow;
         bankStatement.UserId = Guid.Parse(id);
         bankStatement.TransferAmount = amount;
         bankStatement.Type = Types.transfer;

@@ -29,7 +29,7 @@ public class UserRepository : IUserRepository
 
     public async Task UpdateUser(string? id, UpdateUserRequest userRequest)
     {
-        var updateUser = await _dbContext.Users.FindAsync(id);
+        var updateUser = await _dbContext.Users.Where(User=>User.ID.ToString()==id ).FirstOrDefaultAsync();
         if (updateUser == null) return;
         
         if (userRequest.FirstName != null) updateUser.FirstName = userRequest.FirstName;

@@ -7,7 +7,12 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
 {
     public LoginRequestValidator()
     {
-        RuleFor(request => request.Email).NotEmpty().WithMessage("Email is required");
-        RuleFor(request => request.Password).NotEmpty().MinimumLength(6).WithMessage("Password is required");
+        RuleFor(request => request.Email)
+             .NotEmpty()
+             .WithMessage("Email is required");
+        RuleFor(request => request.Password).
+             NotEmpty()
+            .MinimumLength(6)
+            .WithMessage("Password is required");
     }
 }
