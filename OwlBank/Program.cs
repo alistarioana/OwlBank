@@ -1,6 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using OwlBank.Repository;
 using OwlBank;
+using OwlBank.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,23 @@ builder.Services.AddDbContext<OwlBankDBContext>(options =>
 
    
 builder.Services.AddAuthServices(builder.Configuration);
+builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.Events ??= new JwtBearerEvents();
+    options.Events.OnChallenge = async context =>
+    {
+        context.HandleResponse();
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        context.Response.ContentType = "application/json";
+
+        var result = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            message = "Sesiunea ta a expirat. Te rugam sa te reconectezi."
+        });
+
+        await context.Response.WriteAsync(result);
+    };
+});
 
 var app = builder.Build();
 
@@ -38,4 +56,5 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<OwlBankDBContext>(); 
     db.Database.Migrate();
 }
+
 app.Run();

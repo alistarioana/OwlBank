@@ -69,7 +69,7 @@ public class LoginService : ILoginService
 
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.Now.AddHours(1),
+            expires: DateTime.Now.AddHours(1),//aici trebuie sa pun un mesaj cand a ajuns la 60 de minute ca s a invechit tokenul
             signingCredentials: creds
         );
 
