@@ -1,10 +1,12 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OwlBank.DTOs.UserDTO;
 using OwlBank.Models;
+using System.Security.Claims;
 
 namespace OwlBank.Controllers;
+
+using OwlBank.Exceptions;
 using OwlBank.Services;
 
 [ApiController]
@@ -123,24 +125,26 @@ public class UserController : ControllerBase
         [HttpGet("card-details")]
         public async Task<CardDetailsResponse> ShowCardDetails(string password, string cardID)
         {
-            var userId = User.FindFirst("User Id")?.Value;
-            var card = _service.ShowCardDetails(userId, password, cardID);
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var card = _service.ShowCardDetails(userId, password, cardID);
             return await card;
         }
-
-        [HttpPost("add-cards")]
+    [Authorize]
+    [HttpPost("add-cards")]
         public async Task<AddCardsResponse> AddCards()
         {
-            var userId = User.FindFirst("User Id")?.Value;
-            return await _service.AddCard(userId);
+          var userId = User.FindFirst("User Id")?.Value;
+        //var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null) throw new UserNotFoundException();
+        return await _service.AddCard(userId);
         }
 
         [HttpPost("delete-cards")]
 
         public async Task DeleteCards([FromQuery] string cardId)
         {
-            var userId = User.FindFirst("User Id")?.Value; 
-            await _service.DeleteCard(cardId, userId);
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        await _service.DeleteCard(cardId, userId);
         }
 
         [HttpPatch("blocked-cards/{cardId}")]

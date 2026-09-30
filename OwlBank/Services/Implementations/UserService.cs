@@ -243,13 +243,13 @@ public class UserService : IUserService
         
         card.CardNumber = userCard.CardNumber;
         card.CVV = userCard.CVV;
-        card.ExpirationDate = DateOnly.FromDateTime(userCard.ExpirationDate).ToString("MM/yyyy");
-
-        var expire = card.ExpirationDate.Split(".");
+    //    card.ExpirationDate = DateOnly.FromDateTime(userCard.ExpirationDate).ToString("MM/yyyy");
+        card.ExpirationDate = userCard.ExpirationDate.ToString("MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+  //      var expire = card.ExpirationDate.Split(".");
         
-        expire[1] = expire[1].Substring(0);
+//        expire[1] = expire[1].Substring(0);
         
-        card.ExpirationDate = string.Join("/", expire); 
+    //    card.ExpirationDate = string.Join("/", expire); 
         
         return card;
     }
@@ -257,11 +257,13 @@ public class UserService : IUserService
     public async Task<AddCardsResponse> AddCard(string userId)
     {
         var user = await _userRepository.GetUserById(userId);
-        
+        if (user == null) throw new UserNotFoundException();
         Card card = new Card();
         Random random = new Random();
         card.FirstName = user.FirstName;
         card.LastName = user.LastName;
+        
+        card.IsBlocked = false;
         card.CardNumber = string.Concat(Enumerable.Range(0, 16)
             .Select(_ => random.Next(0, 10)));
         card.CVV = string.Concat(Enumerable.Range(0, 3)
@@ -275,13 +277,13 @@ public class UserService : IUserService
         
         AddCardsResponse cardResponse = new AddCardsResponse();
         cardResponse.CardNumber = card.CardNumber;
-        cardResponse.ExpirationDate = DateOnly.FromDateTime(card.ExpirationDate).ToString("MM/yyyy");
-
-        var expire = cardResponse.ExpirationDate.Split(".");
+        //cardResponse.ExpirationDate = DateOnly.FromDateTime(card.ExpirationDate).ToString("MM/yyyy");
+        cardResponse.ExpirationDate = card.ExpirationDate.ToString("MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        //var expire = cardResponse.ExpirationDate.Split(".");
         
-        expire[1] = expire[1].Substring(2);
+       // expire[1] = expire[1].Substring(2);
         
-        cardResponse.ExpirationDate = string.Join("/", expire); 
+        //cardResponse.ExpirationDate = string.Join("/", expire); 
         cardResponse.CVV = card.CVV;
         cardResponse.Name = card.FirstName + " " + card.LastName;
         
@@ -291,6 +293,7 @@ public class UserService : IUserService
     public async Task DeleteCard(string cardId, string userId)
     {
         var user = await _userRepository.GetUserById(userId);
+        if (user == null) throw new UserNotFoundException();
         var card = user.Cards.Where(x => x.Id.ToString() == cardId).FirstOrDefault();
         if (card == null)
         {
@@ -311,12 +314,14 @@ public class UserService : IUserService
 
         card.IsBlocked = true;
         
+        
         await _cardRepository.SaveChanges();
     }
 
     public async Task ActivateCard(string cardId, string userId)
     {
         var cards = await _cardRepository.GetCards();
+
         var card = cards?.Where(x => x.Id.ToString() == cardId && x.UserId.ToString() == userId).FirstOrDefault();
         if (card == null)
         {
@@ -350,9 +355,11 @@ public class UserService : IUserService
             Id = x.Id,
             FirstName = x.FirstName,
             LastName=x.LastName,
+         ExpirationDate = x.ExpirationDate,
             CardNumber = x.CardNumber,
             UserId = x.UserId,
             IsBlocked = x.IsBlocked
+           
     
 
         }).ToList();

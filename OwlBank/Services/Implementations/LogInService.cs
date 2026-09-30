@@ -57,11 +57,13 @@ public class LoginService : ILoginService
         {
             new Claim("User Id", user.ID.ToString()),
             new Claim("Email", user.Email)
+    
         };
 
         foreach (var role in user.UserRoles)
         {
             claims.Add(new Claim("Roles", role.ToString()));
+       
         }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("rkjlngbaekj-jRNVWKrnb-ekfrjnvoern"));
