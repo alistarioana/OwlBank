@@ -357,7 +357,7 @@ public class UserService : IUserService
     public async Task<List<Card>> GetAllCardsAsync(string userId)
     {
         var cards = await _cardRepository.GetCards();
-        return cards.Where(x => x.UserId.ToString() == userId && x.isActive).Select(x => new Card
+        return cards.Where(x => x.UserId.ToString() == userId).Select(x => new Card
         {
             Id = x.Id,
             FirstName = x.FirstName,
