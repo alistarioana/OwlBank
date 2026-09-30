@@ -19,6 +19,7 @@ public interface IUserService
     public Task<List<BankStatement>> TransferDetails(string userId, string name);
     public Task<ContactDetailsResponse> GetContactDetails(string id);
     public Task<CardDetailsResponse> ShowCardDetails(string id, string password, string cardID);
+     
     public Task<AddCardsResponse> AddCard(string userId);
     public Task DeleteCard(string cardId, string userId);
     public Task BlockCard(string cardId, string userId);

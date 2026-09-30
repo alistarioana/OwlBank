@@ -125,9 +125,16 @@ public class UserController : ControllerBase
         [HttpGet("card-details")]
         public async Task<CardDetailsResponse> ShowCardDetails(string password, string cardID)
         {
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.FindFirst("User Id")?.Value;
         var card = _service.ShowCardDetails(userId, password, cardID);
             return await card;
+        }
+        [HttpGet("card-details-back")]
+        public async Task<CardDetailsResponse> ShowCardDetailsBack(string password,string cardID)
+        {
+        var userId = User.FindFirst("User Id")?.Value;
+        var card = _service.ShowCardDetails(userId, password, cardID);
+        return await card;
         }
     [Authorize]
     [HttpPost("add-cards")]
@@ -143,7 +150,7 @@ public class UserController : ControllerBase
 
         public async Task DeleteCards([FromQuery] string cardId)
         {
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.FindFirst("User Id")?.Value;
         await _service.DeleteCard(cardId, userId);
         }
 
