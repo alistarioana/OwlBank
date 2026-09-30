@@ -42,7 +42,11 @@ builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.Authenticatio
 var app = builder.Build();
 
 app.UseSwagger(); 
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "OwlBank API v1");
+    c.EnablePersistAuthorization();  
+});
 
 app.UseHttpsRedirection();
 
