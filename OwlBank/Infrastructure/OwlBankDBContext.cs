@@ -5,12 +5,9 @@ using OwlBank.DTOs.UserDTO;
 
 namespace OwlBank.Repository;
 
-public class OwlBankDBContext : DbContext
+public class OwlBankDBContext(DbContextOptions<OwlBankDBContext> option) : DbContext(option)
 {
-    public OwlBankDBContext(DbContextOptions<OwlBankDBContext> options) : base(options) { }
-    
     public DbSet<User> Users { get; set; }
-    
     public DbSet<Card> Cards { get; set; }
     public DbSet<BankStatement> BankStatement { get; set; }
     

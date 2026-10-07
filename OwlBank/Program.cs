@@ -5,6 +5,8 @@ using OwlBank.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.DefaultIgnoreCondition =
@@ -16,10 +18,8 @@ builder.Services.AddDependencies();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<OwlBankDBContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.AddNpgsqlDbContext<OwlBankDBContext>("OwlBankDb");
 
-   
 builder.Services.AddAuthServices(builder.Configuration);
 builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
@@ -40,6 +40,8 @@ builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.Authenticatio
 });
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.UseSwagger(); 
 app.UseSwaggerUI(c =>

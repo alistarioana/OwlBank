@@ -1,8 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12224.181 stable
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwlBank", "OwlBank\OwlBank.csproj", "{892B78C3-D1A1-4E71-9968-81EE38A85B69}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwlBank.Tests", "OwlBank.Tests\OwlBank.Tests.csproj", "{F85CD9A0-F6C1-4C0A-9D99-9D383D0FD984}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwlBank.AppHost", "OwlBank.AppHost\OwlBank.AppHost.csproj", "{CDCE694B-DF90-4831-8C9C-D38DD9BEE0B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwlBank.ServiceDefaults", "OwlBank.ServiceDefaults\OwlBank.ServiceDefaults.csproj", "{CE58904B-53CF-E44F-3CCE-5762A01ABFC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +25,16 @@ Global
 		{F85CD9A0-F6C1-4C0A-9D99-9D383D0FD984}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F85CD9A0-F6C1-4C0A-9D99-9D383D0FD984}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F85CD9A0-F6C1-4C0A-9D99-9D383D0FD984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDCE694B-DF90-4831-8C9C-D38DD9BEE0B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDCE694B-DF90-4831-8C9C-D38DD9BEE0B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDCE694B-DF90-4831-8C9C-D38DD9BEE0B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDCE694B-DF90-4831-8C9C-D38DD9BEE0B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE58904B-53CF-E44F-3CCE-5762A01ABFC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE58904B-53CF-E44F-3CCE-5762A01ABFC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE58904B-53CF-E44F-3CCE-5762A01ABFC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE58904B-53CF-E44F-3CCE-5762A01ABFC6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

@@ -52,7 +52,7 @@ public class UserController : ControllerBase
         [HttpGet("balance")]
         public async Task<decimal> GetBalance()
         {
-          var userId = User.FindFirst("User Id")?.Value;
+            var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             var balance = await _service.GetBalance(userId);
@@ -63,7 +63,7 @@ public class UserController : ControllerBase
         [HttpPost("transfer/{phoneNumber}")]
         public async Task Transfer([FromRoute] string phoneNumber,[FromQuery] decimal amount)
         {
-          var userId = User.FindFirst("User Id")?.Value;
+            var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
 
             await _service.Transfer(userId, phoneNumber, amount);
@@ -72,7 +72,7 @@ public class UserController : ControllerBase
         [HttpDelete]
         public async Task DeleteUser()
         {
-          var userId = User.FindFirst("User Id")?.Value;
+            var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             await _service.DeleteUser(userId);
@@ -81,7 +81,7 @@ public class UserController : ControllerBase
         [HttpPatch]
         public async Task UpdateUser(UpdateUserRequest userRequest)
         {
-          var userId = User.FindFirst("User Id")?.Value;
+            var userId = User.FindFirst("User Id")?.Value;
             if (userId == null) throw new UnauthorizedAccessException();
             
             await _service.UpdateUser(userId, userRequest);
