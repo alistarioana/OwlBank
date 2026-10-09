@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Identity.Data;
-using OwlBank.DTOs.UserDTO;
+using System.Threading.Tasks;
+using OwlBank.Auth.Contracts.DTOs;
 
-namespace OwlBank.Services;
+namespace OwlBank.Auth.Contracts.Interfaces;
 
 public interface ILoginService
 {

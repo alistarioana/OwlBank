@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using OwlBank;
 using OwlBank.Repository;
+using OwlBank.Auth.Contracts.Interfaces;
+using OwlBank.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,13 @@ builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.Authenticatio
         await context.Response.WriteAsync(result);
     };
 });
+// Register HttpClient for Auth service and the HTTP-based ILoginService implementation
+builder.Services.AddHttpClient("Auth", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["AuthService:BaseUrl"] ?? "https://localhost:5002");
+});
+
+builder.Services.AddScoped<ILoginService, AuthHttpLoginService>();
 
 var app = builder.Build();
 

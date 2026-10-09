@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using OwlBank.DTOs.UserDTO;
-using OwlBank.Services;
+using OwlBank.Auth.Contracts.DTOs;
+using OwlBank.Auth.Contracts.Interfaces;
 
-namespace OwlBank.Controllers;
+namespace OwlBank.Auth.Controllers;
 
 [ApiController]
+[Route("api")]
 public class LoginController : ControllerBase
 {
     private readonly ILoginService _service;
@@ -30,12 +30,9 @@ public class LoginController : ControllerBase
     }
 
     [HttpPatch("resetpassword")]
-    
     public async Task ResetPassword([FromQuery] string email, [FromQuery] string password,
         [FromQuery] string newPassword, [FromQuery] string confirmPassword)
     {
         await _service.ResetPassword(email, password, newPassword, confirmPassword);
     }
-    
 }
-    

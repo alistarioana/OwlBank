@@ -1,3 +1,5 @@
+
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder
@@ -6,10 +8,21 @@ var postgres = builder
     .WithPgAdmin()
     .AddDatabase("OwlBankDb");
 
+var auth = builder
+    .AddProject("auth", @"..\OwlBank.Auth\OwlBank.Auth.csproj")
+    .WithReference(postgres)
+    .WithHttpEndpoint(
+        port: 5002,
+        targetPort: 5002,
+        name: "http",
+        isProxied: false)
+    .WaitFor(postgres);
+
 var api = builder
     .AddProject<Projects.OwlBank>("api")
     .WithReference(postgres)
-    .WaitFor(postgres);
+    .WaitFor(postgres)
+    .WaitFor(auth);
 
 var frontend = builder
     .AddExecutable(
@@ -17,12 +30,12 @@ var frontend = builder
         "npm.cmd",
         "../OwlBank-Fe",
         "start")
-    .WithReference(api)                  // injects services__api__http__0 / https__0
+    .WithReference(api)                 
     .WithHttpEndpoint(
         port: 4200,
         targetPort: 4200,
         name: "http",
-        isProxied: false)                // no Aspire proxy, so Host stays localhost:4200
+        isProxied: false)               
     .WaitFor(api);
 
 builder.Build().Run();

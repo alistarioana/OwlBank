@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\OwlBank.ServiceDefaults\OwlBank.ServiceDefaults.csproj" />
+      <ProjectReference Include="..\OwlBank.Auth.Contracts\OwlBank.Auth.Contracts.csproj" />
     </ItemGroup>
 
 </Project>
