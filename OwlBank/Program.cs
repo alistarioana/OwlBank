@@ -4,6 +4,8 @@ using OwlBank;
 using OwlBank.Repository;
 using OwlBank.Auth.Contracts.Interfaces;
 using OwlBank.Services.Implementations;
+using Microsoft.AspNetCore.Http.Features;
+using OwlBank.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +21,21 @@ builder.Services.AddDependencies();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = ctx => { 
+        ctx.ProblemDetails.Instance= $"{ctx.HttpContext.Request.Method} {ctx.HttpContext.Request.Path}";
 
+        ctx.ProblemDetails.Extensions.TryAdd("requestId", ctx.HttpContext.TraceIdentifier);
+
+        var activity = ctx.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+        ctx.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+
+
+    };
+});
+
+builder.Services.AddExceptionHandler<ProblemExceptionHandler>();
 builder.AddNpgsqlDbContext<OwlBankDBContext>("OwlBankDb");
 
 builder.Services.AddAuthServices(builder.Configuration);
@@ -29,15 +45,20 @@ builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.Authenticatio
     options.Events.OnChallenge = async context =>
     {
         context.HandleResponse();
-        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-        context.Response.ContentType = "application/json";
 
-        var result = System.Text.Json.JsonSerializer.Serialize(new
+        context.Response.StatusCode =
+            StatusCodes.Status401Unauthorized;
+
+        var problem = new Microsoft.AspNetCore.Mvc.ProblemDetails
         {
-            message = "Sesiunea ta a expirat. Te rugam sa te reconectezi."
-        });
+            Status = StatusCodes.Status401Unauthorized,
+            Title = "Unauthorized",
+            Detail = "Sesiunea ta a expirat. Te rugam sa te reconectezi.",
+            Type = "https://tools.ietf.org/html/rfc9110#section-15.5.2",
+            Instance = $"{context.Request.Method} {context.Request.Path}"
+        };
 
-        await context.Response.WriteAsync(result);
+        await context.Response.WriteAsJsonAsync(problem);
     };
 });
 // Register HttpClient for Auth service and the HTTP-based ILoginService implementation
@@ -50,6 +71,7 @@ builder.Services.AddScoped<ILoginService, AuthHttpLoginService>();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.MapDefaultEndpoints();
 
 app.UseSwagger(); 

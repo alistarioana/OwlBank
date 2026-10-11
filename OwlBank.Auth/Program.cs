@@ -1,9 +1,11 @@
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using OwlBank.Auth.Contracts.Interfaces;
+using OwlBank.Exceptions;
 using OwlBank.Repository;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = ctx => 
+    {
+        ctx.ProblemDetails.Instance = $"{ctx.HttpContext.Request.Method} {ctx.HttpContext.Request.Path}";
+
+        ctx.ProblemDetails.Extensions.TryAdd("requestId", ctx.HttpContext.TraceIdentifier);
+
+        var activity = ctx.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+        ctx.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+    };
+});
+builder.Services.AddExceptionHandler<ProblemExceptionHandler>();
 
 // Register application services from the referenced OwlBank project
 builder.Services.AddScoped<ILoginService, OwlBank.Auth.Services.LoginService>();
@@ -38,6 +53,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {

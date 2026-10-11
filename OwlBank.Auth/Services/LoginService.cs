@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using OwlBank.Auth.Contracts.DTOs;
 using OwlBank.Auth.Contracts.Interfaces;
+using OwlBank.Exceptions;
 using OwlBank.Models;
 using OwlBank.Repository;
 
@@ -21,9 +22,10 @@ public class LoginService : ILoginService
     public async Task<string> Login(LoginRequest userRequest)
     {
         var user = await _userRepository.GetUserByEmail(userRequest.Email);
+
         if (user == null)
         {
-            throw new Exception($"No user with email {userRequest.Email} registered.");
+            throw new ProblemException("User not Found", $"No user with email {userRequest.Email} registered.");
         }
 
         bool passwordValid = BCrypt.Net.BCrypt.Verify(userRequest.Password, user.Password);
@@ -49,7 +51,7 @@ public class LoginService : ILoginService
 
             await _userRepository.Update(user);
 
-            throw new AuthenticationException($"Wrong password. Attempt {user.LoginAttempt} / 3");
+            throw new ProblemException("Wrong Password", $"Wrong password. Attempt {user.LoginAttempt} / 3");
         }
 
         var claims = new List<Claim>

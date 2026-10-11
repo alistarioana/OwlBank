@@ -96,7 +96,7 @@ public class UserService : IUserService
     public async Task<decimal> GetBalance(string id)
     {
         var user = await _userRepository.GetUserById(id);
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
 
         return user.Balance;
     }

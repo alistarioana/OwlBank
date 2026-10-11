@@ -3,7 +3,7 @@ using OwlBank.DTOs.UserDTO;
 
 namespace OwlBank.Validators;
 
-public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
+public class CreateUserRequestValidator : AbstractValidator<Auth.Contracts.DTOs.CreateUserRequest>
 {
     public CreateUserRequestValidator()
     {

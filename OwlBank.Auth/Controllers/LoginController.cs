@@ -22,11 +22,11 @@ public class LoginController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<string> Login([FromQuery] LoginRequest userRequest)
+    public async Task<ActionResult<string>> Login(
+    [FromBody] LoginRequest userRequest)
     {
         var token = await _service.Login(userRequest);
-
-        return token;
+        return Ok(token);
     }
 
     [HttpPatch("resetpassword")]
