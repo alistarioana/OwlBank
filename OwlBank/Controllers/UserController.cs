@@ -142,7 +142,7 @@ public class UserController : ControllerBase
         {
           var userId = User.FindFirst("User Id")?.Value;
         //var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null) throw new UserNotFoundException();
+        if (userId == null) throw new ProblemException("User Id not found", "Unable to find user ID.");
         return await _service.AddCard(userId);
         }
 

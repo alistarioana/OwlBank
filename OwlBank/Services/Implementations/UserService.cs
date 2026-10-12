@@ -41,10 +41,10 @@ public class UserService : IUserService
         var user = await _userRepository.GetUserById(id);
 
         if (user == null)
-            throw new UserNotFoundException();
+            throw new ProblemException("User not found", "The specified user could not be found.");
 
         if (amount <= 0)
-            throw new Exception("Invalid amount");
+            throw new ProblemException("Invalid amount", "The specified amount is invalid.");
 
         var timeStamp = DateTime.UtcNow;
         BankStatement bankStatement = new BankStatement();
@@ -64,12 +64,12 @@ public class UserService : IUserService
     {
         var user = await _userRepository.GetUserById(id);
 
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
 
-        if (amount <= 0) throw new Exception("Invalid amount");
+        if (amount <= 0) throw new ProblemException("Invalid amount", "The specified amount is invalid.");
 
         if (user.Balance < amount)
-            throw new Exception("Insufficient funds");
+            throw new ProblemException("Insufficient funds", "The specified user has insufficient funds.");
 
         var timeStamp = DateTime.UtcNow;
         BankStatement bankStatement = new BankStatement();
@@ -104,12 +104,12 @@ public class UserService : IUserService
     public async Task Transfer(string id, string phoneNumber, decimal amount)
     {
         var user = await _userRepository.GetUserById(id);
-        if (user == null) throw new UserNotFoundException();
-        if (amount <= 0) throw new Exception("Invalid amount");
+        if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
+        if (amount <= 0) throw new ProblemException("Invalid amount", "The specified amount is invalid.");
         if (user.Balance < amount)
-            throw new Exception("Insufficient funds");
+            throw new ProblemException("Insufficient funds", "The specified user has insufficient funds.");
         var receiverUser = await _userRepository.GetUserByPhoneNumber(phoneNumber);
-        if (receiverUser == null) throw new UserNotFoundException();
+        if (receiverUser == null) throw new ProblemException("User not found", "The specified user could not be found.");
 
         BankStatement bankStatement = new BankStatement();
 
@@ -179,7 +179,7 @@ public class UserService : IUserService
     public async Task<UserDetailsResponse> GetUserDetails(string userId)
     {
         var user = await _userRepository.GetUserById(userId);
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
 
         return new UserDetailsResponse()
         {
@@ -221,7 +221,7 @@ public class UserService : IUserService
     public async Task<ContactDetailsResponse> GetContactDetails(string id)
     {
         var user = await _userRepository.GetUserById(id);
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
 
         ContactDetailsResponse contactDetails = new ContactDetailsResponse();
         contactDetails.Email = user.Email;
@@ -232,7 +232,7 @@ public class UserService : IUserService
     public async Task<CardDetailsResponse> ShowCardDetails(string id, string password, string cardID)
     {
         var user = await _userRepository.GetUserById(id);
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
 
         if (user.Password == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
         {
@@ -264,7 +264,7 @@ public class UserService : IUserService
     public async Task<AddCardsResponse> AddCard(string userId)
     {
         var user = await _userRepository.GetUserById(userId);
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
         Card card = new Card();
         Random random = new Random();
         card.FirstName = user.FirstName;
@@ -300,11 +300,11 @@ public class UserService : IUserService
     public async Task DeleteCard(string cardId, string userId)
     {
         var user = await _userRepository.GetUserById(userId);
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
         var card = user.Cards.Where(x => x.Id.ToString() == cardId).FirstOrDefault();
         if (card == null)
         {
-            throw new Exception("Card not found.");
+            throw new ProblemException("Card not found", "The specified card could not be found.");
         }
         await _userRepository.DeleteCard(card);
     }

@@ -32,7 +32,7 @@ public class AdminRepository : IAdminRepository
     {
         var user = await _dbContext.Users.Where(x => x.ID.ToString() == id).FirstOrDefaultAsync();
         
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new ProblemException("User not found", "Unable to find user.");
         
         _dbContext.Users.Remove(user);
         await _dbContext.SaveChangesAsync();

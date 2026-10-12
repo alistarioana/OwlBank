@@ -58,7 +58,7 @@ public class AdminService : IAdminService
             var user = await _db.FindUserById(id);
             if (user == null)
             {
-                throw new UserNotFoundException();
+                throw new ProblemException("User not found", "Unable to find user.");
             }
 
             foreach (var role in roles)
@@ -77,7 +77,7 @@ public class AdminService : IAdminService
             var user = await _db.FindUserById(id);
             if (user == null)
             {
-                throw new UserNotFoundException();
+                throw new ProblemException("User not found", "The specified user could not be found.");
             }
 
             user.Password = BCrypt.Net.BCrypt.HashPassword("OwlBank2026");
