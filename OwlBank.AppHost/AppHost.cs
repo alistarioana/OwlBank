@@ -27,15 +27,15 @@ var api = builder
 var frontend = builder
     .AddExecutable(
         "frontend",
-        "npm.cmd",
-        "../OwlBank-Fe",
-        "start")
-    .WithReference(api)                 
+        "ng.cmd",
+        "../../OwlBank-Fe",
+        "serve")
+    .WithReference(api)
     .WithHttpEndpoint(
         port: 4200,
         targetPort: 4200,
         name: "http",
-        isProxied: false)               
+        isProxied: false)
     .WaitFor(api);
 
 builder.Build().Run();
