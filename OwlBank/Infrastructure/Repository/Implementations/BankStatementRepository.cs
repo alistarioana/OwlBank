@@ -31,7 +31,7 @@ public class BankStatementRepository : IBankStatementRepository
         return Task.CompletedTask;
     }
 
-    public async Task<List<BankStatement>> GetStatementByDate(DateTime startDate, DateTime endDate, string? userId)
+    public async Task<List<BankStatement>> GetStatementByDate(DateTime startDate, DateTime endDate, Guid? userId)
     {
         startDate = DateTime.SpecifyKind(
             startDate.Date,
@@ -42,20 +42,20 @@ public class BankStatementRepository : IBankStatementRepository
             DateTimeKind.Utc);
 
         var statement = _context.BankStatement
-            .Where(x => x.UserId.ToString() == userId && x.TimeStamp >= startDate && x.TimeStamp <= endDate);
+            .Where(x => x.UserId == userId && x.TimeStamp >= startDate && x.TimeStamp <= endDate);
         
         return statement.ToList();
     }
 
-    public async Task<List<BankStatement>> ReceivedDetails(string userId, string name)
+    public async Task<List<BankStatement>> ReceivedDetails(Guid userId, string name)
     {
        return _context.BankStatement
-            .Where(x => x.UserId.ToString() == userId)
+            .Where(x => x.UserId == userId)
             .Where(x => x.Description.ToLower().Contains(name.ToLower())).ToList();
     }
 
-    public async Task<List<BankStatement>> GetAllStatements(string userId)
+    public async Task<List<BankStatement>> GetAllStatements(Guid userId)
     {
-        return _context.BankStatement.Where(x => x.UserId.ToString() == userId).ToList();
+        return _context.BankStatement.Where(x => x.UserId == userId).ToList();
     }
 }

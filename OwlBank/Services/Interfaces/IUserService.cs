@@ -7,25 +7,25 @@ namespace OwlBank.Services;
 
 public interface IUserService
 {
-    public Task DeleteUser(string id);
-    public Task UpdateUser(string id, UpdateUserRequest userRequest);
-    public Task Deposit(string id, decimal amount, string description);
-    public Task Withdraw(string id, decimal amount, string description);
-    public Task<List<BankStatement>> GetStatementByDateRange(string userId, DateTime startDate, DateTime endDate);
-    public Task<decimal> GetBalance(string id);
-    public Task Transfer(string id, string phoneNumber, decimal amount);
+    public Task DeleteUser(Guid id);
+    public Task UpdateUser(Guid id, UpdateUserRequest userRequest);
+    public Task Deposit(Guid id, decimal amount, string description);
+    public Task Withdraw(Guid id, decimal amount, string description);
+    public Task<List<BankStatement>> GetStatementByDateRange(Guid userId, DateTime startDate, DateTime endDate);
+    public Task<decimal> GetBalance(Guid id);
+    public Task Transfer(Guid id, string phoneNumber, decimal amount);
     public Task ResetPassword(string email, string password, string newpassword, string confirmPassword);
-    public Task<UserDetailsResponse> GetUserDetails(string userId);
-    public Task<List<BankStatement>> TransferDetails(string userId, string name);
-    public Task<ContactDetailsResponse> GetContactDetails(string id);
-    public Task<CardDetailsResponse> ShowCardDetails(string id, string password, string cardID);
+    public Task<UserDetailsResponse> GetUserDetails(Guid userId);
+    public Task<List<BankStatement>> TransferDetails(Guid userId, string name);
+    public Task<ContactDetailsResponse> GetContactDetails(Guid id);
+    public Task<CardDetailsResponse> ShowCardDetails(Guid id, string password, string cardID);
      
-    public Task<AddCardsResponse> AddCard(string userId);
-    public Task DeleteCard(string cardId, string userId);
-    public Task BlockCard(string cardId, string userId);
-    public Task ActivateCard(string cardId, string userId);
+    public Task<AddCardsResponse> AddCard(Guid userId);
+    public Task DeleteCard(string cardId, Guid userId);
+    public Task BlockCard(string cardId, Guid userId);
+    public Task ActivateCard(string cardId, Guid userId);
 
-    public Task<List<Transaction>> GetTransactionsAsync(string userId);
+    public Task<List<Transaction>> GetTransactionsAsync(Guid userId);
 
-    public Task<List<Card>> GetAllCardsAsync(string userId);
+    public Task<List<Card>> GetAllCardsAsync(Guid userId);
 }

@@ -7,6 +7,7 @@ using System.Security.Claims;
 namespace OwlBank.Controllers;
 
 using OwlBank.Exceptions;
+using OwlBank.Extensions;
 using OwlBank.Services;
 
 [ApiController]
@@ -16,172 +17,94 @@ public class UserController : ControllerBase
 {
         private readonly IUserService _service;
 
+        private Guid UserId => User.GetUserId();
+
         public UserController(IUserService service)
         {
             _service = service;
         }
         
         [HttpPost("deposit")]
-        public async Task Deposit([FromQuery] DepositBalanceRequest dto)
-        {
-          var userId = User.FindFirst("User Id")?.Value;
-            if (userId == null) throw new UnauthorizedAccessException();
-            
-            await _service.Deposit(userId, dto.Amount, dto.Description);
-        }
+        public async Task Deposit([FromQuery] DepositBalanceRequest dto) => 
+            await _service.Deposit(UserId, dto.Amount, dto.Description);
 
         [HttpPost("withdraw")]
         public async Task Withdraw([FromQuery] WithdrawBalanceRequest dto)
         {
-          var userId = User.FindFirst("User Id")?.Value;
-            if (userId == null) throw new UnauthorizedAccessException();
-            
-            await _service.Withdraw(userId, dto.Amount, dto.Description);
+            await _service.Withdraw(UserId, dto.Amount, dto.Description);
         }
 
         [HttpGet("statement")]
-        public async Task<List<BankStatement>> GetStatement([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
-        { 
-          var userId = User.FindFirst("User Id")?.Value;
-            if (userId == null) throw new UnauthorizedAccessException();
-            
-            var statement = await _service.GetStatementByDateRange(userId, startDate, endDate);
-            return statement;
-        }
+        public async Task<List<BankStatement>> GetStatement([FromQuery] DateTime startDate, [FromQuery] DateTime endDate) => 
+             await _service.GetStatementByDateRange(UserId, startDate, endDate);
 
         [HttpGet("balance")]
-        public async Task<decimal> GetBalance()
-        {
-            var userId = User.FindFirst("User Id")?.Value;
-            if (userId == null) throw new UnauthorizedAccessException();
+        public async Task<decimal> GetBalance() => 
+           await _service.GetBalance(UserId);
             
-            var balance = await _service.GetBalance(userId);
-            
-            return balance;
-        }
 
         [HttpPost("transfer/{phoneNumber}")]
-        public async Task Transfer([FromRoute] string phoneNumber,[FromQuery] decimal amount)
-        {
-            var userId = User.FindFirst("User Id")?.Value;
-            if (userId == null) throw new UnauthorizedAccessException();
-
-            await _service.Transfer(userId, phoneNumber, amount);
-        }
+        public async Task Transfer([FromRoute] string phoneNumber,[FromQuery] decimal amount) => 
+            await _service.Transfer(UserId, phoneNumber, amount);
         
         [HttpDelete]
-        public async Task DeleteUser()
-        {
-            var userId = User.FindFirst("User Id")?.Value;
-            if (userId == null) throw new UnauthorizedAccessException();
-            
-            await _service.DeleteUser(userId);
-        }
+        public async Task DeleteUser() => 
+            await _service.DeleteUser(UserId);
 
         [HttpPatch]
-        public async Task UpdateUser(UpdateUserRequest userRequest)
-        {
-            var userId = User.FindFirst("User Id")?.Value;
-            if (userId == null) throw new UnauthorizedAccessException();
-            
-            await _service.UpdateUser(userId, userRequest);
-        }
+        public async Task UpdateUser(UpdateUserRequest userRequest) => 
+            await _service.UpdateUser(UserId, userRequest);
         
         [HttpPatch("reset")]
-        public async Task ResetPassword([FromQuery] string email, [FromQuery] string password,
-            [FromQuery] string newPassword, [FromQuery] string confirmPassword)
-        {
-            await _service.ResetPassword(email, password, newPassword, confirmPassword);
-        }
+        public async Task ResetPassword(
+            [FromQuery] string email,
+            [FromQuery] string password,
+            [FromQuery] string newPassword,
+            [FromQuery] string confirmPassword)
+            => await _service.ResetPassword(email, password, newPassword, confirmPassword);
 
         [HttpGet("user-details")]
-        public async Task<UserDetailsResponse> GetUserDetails()
-        { 
-            var userId = User.FindFirst("User Id")?.Value;
-            if (userId == null) throw new UnauthorizedAccessException();
-            
-            var user = await _service.GetUserDetails(userId);
-
-            return user;
-        }
+        public async Task<UserDetailsResponse> GetUserDetails() => 
+            await _service.GetUserDetails(UserId);
 
         [HttpGet("transfer-details/{name}")]
-
-        public async Task<List<BankStatement>>GetTransferDetail([FromRoute] string name)
-        {
-            var userId = User.FindFirst("User Id")?.Value;
-            var user = await _service.TransferDetails(userId, name);
-            return user;
-        }
+        public async Task<List<BankStatement>>GetTransferDetail([FromRoute] string name) => 
+            await _service.TransferDetails(UserId, name);
 
         [HttpGet("contact-details")]
-        public async Task<ContactDetailsResponse> GetContactDetails()
-        {
-            var userId = User.FindFirst("User Id")?.Value;
-            var response = await _service.GetContactDetails(userId);
-            return response;
-        }
+        public async Task<ContactDetailsResponse> GetContactDetails() =>
+            await _service.GetContactDetails(UserId);
 
         [HttpGet("card-details")]
-        public async Task<CardDetailsResponse> ShowCardDetails(string password, string cardID)
-        {
-        var userId = User.FindFirst("User Id")?.Value;
-        var card = _service.ShowCardDetails(userId, password, cardID);
-            return await card;
-        }
+        public async Task<CardDetailsResponse> ShowCardDetails(string password, string cardID) => 
+         await _service.ShowCardDetails(UserId, password, cardID);
+
         [HttpGet("card-details-back")]
-        public async Task<CardDetailsResponse> ShowCardDetailsBack(string password,string cardID)
-        {
-        var userId = User.FindFirst("User Id")?.Value;
-        var card = _service.ShowCardDetails(userId, password, cardID);
-        return await card;
-        }
-    [Authorize]
-    [HttpPost("add-cards")]
-        public async Task<AddCardsResponse> AddCards()
-        {
-          var userId = User.FindFirst("User Id")?.Value;
-        //var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null) throw new ProblemException("User Id not found", "Unable to find user ID.");
-        return await _service.AddCard(userId);
-        }
+        public async Task<CardDetailsResponse> ShowCardDetailsBack(string password,string cardID) => 
+            await _service.ShowCardDetails(UserId, password, cardID);
+
+        [Authorize]
+        [HttpPost("add-cards")]
+        public async Task<AddCardsResponse> AddCards() => 
+            await _service.AddCard(UserId);
 
         [HttpPost("delete-cards")]
-
-        public async Task DeleteCards([FromQuery] string cardId)
-        {
-        var userId = User.FindFirst("User Id")?.Value;
-        await _service.DeleteCard(cardId, userId);
-        }
+        public async Task DeleteCards([FromQuery] string cardId) =>
+            await _service.DeleteCard(cardId, UserId);
 
         [HttpPatch("blocked-cards/{cardId}")]
-        public async Task BlockedCards([FromRoute] string cardId)
-        {
-            var userId = User.FindFirst("User Id")?.Value;
-            await _service.BlockCard(cardId, userId);
-        }
+        public async Task BlockedCards([FromRoute] string cardId) =>
+            await _service.BlockCard(cardId, UserId);
 
         [HttpPatch("activate-cards/{cardId}")]
-        public async Task ActivateCard([FromRoute] string cardId)
-        {
-            var userId = User.FindFirst("User Id")?.Value;
-            await _service.ActivateCard(cardId, userId);
-        }
+        public async Task ActivateCard([FromRoute] string cardId) =>
+             await _service.ActivateCard(cardId, UserId);
+
         [HttpGet("transactions")]
-        public async Task<List<Transaction>> GetTransactions()
-        {
-            var userId = User.FindFirst("User Id")?.Value;
-           return  await _service.GetTransactionsAsync(userId);
-        }
+        public async Task<List<Transaction>> GetTransactions() => 
+             await _service.GetTransactionsAsync(UserId);
 
         [HttpGet("get-all-cards")]
-        public async Task<List<Card>> GetAllCards()
-        {
-            var userId = User.FindFirst("User Id")?.Value.ToString();
-       /* if (string.IsNullOrEmpty(userId))
-        {
-            return new List<Card>();
-        }*/
-         return await _service.GetAllCardsAsync(userId);
-        }
+        public async Task<List<Card>> GetAllCards() => 
+            await _service.GetAllCardsAsync(UserId);
 }

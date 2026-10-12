@@ -17,6 +17,7 @@ public class AuthHttpLoginService : OwlBank.Auth.Contracts.Interfaces.ILoginServ
     {
         var client = _httpClientFactory.CreateClient("Auth");
         var resp = await client.PostAsJsonAsync("api/login", userRequest);
+       
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<string>() ?? string.Empty;
     }
@@ -25,6 +26,7 @@ public class AuthHttpLoginService : OwlBank.Auth.Contracts.Interfaces.ILoginServ
     {
         var client = _httpClientFactory.CreateClient("Auth");
         var resp = await client.PostAsJsonAsync("api/register", userRequest);
+        
         resp.EnsureSuccessStatusCode();
     }
 
@@ -33,6 +35,7 @@ public class AuthHttpLoginService : OwlBank.Auth.Contracts.Interfaces.ILoginServ
         var client = _httpClientFactory.CreateClient("Auth");
         var url = $"api/resetpassword?email={Uri.EscapeDataString(email)}&password={Uri.EscapeDataString(password)}&newPassword={Uri.EscapeDataString(newpassword)}&confirmPassword={Uri.EscapeDataString(confirmPassword)}";
         var resp = await client.PatchAsync(url, null);
+        
         resp.EnsureSuccessStatusCode();
     }
 }

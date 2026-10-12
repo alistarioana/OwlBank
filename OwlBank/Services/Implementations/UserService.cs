@@ -26,17 +26,17 @@ public class UserService : IUserService
         _cardRepository = cardRepository;
     }
 
-    public async Task DeleteUser(string id)
+    public async Task DeleteUser(Guid id)
     {
         await _userRepository.DeleteUser(id);
     }
 
-    public async Task UpdateUser(string id, UpdateUserRequest userRequest)
+    public async Task UpdateUser(Guid id, UpdateUserRequest userRequest)
     {
         await _userRepository.UpdateUser(id, userRequest);
     }
 
-    public async Task Deposit(string id, decimal amount, string description)
+    public async Task Deposit(Guid id, decimal amount, string description)
     {
         var user = await _userRepository.GetUserById(id);
 
@@ -51,7 +51,7 @@ public class UserService : IUserService
         bankStatement.Description = description;
         bankStatement.ReceivedAmount = amount;
         bankStatement.TimeStamp = timeStamp;
-        bankStatement.UserId = Guid.Parse(id);
+        bankStatement.UserId = id;
         bankStatement.TransferAmount = amount;
         bankStatement.Type = Types.deposit;
         user.Balance += amount;
@@ -60,7 +60,7 @@ public class UserService : IUserService
         await _bankStatementRepository.DepositAction(bankStatement);
     }
 
-    public async Task Withdraw(string id, decimal amount, string description)
+    public async Task Withdraw(Guid id, decimal amount, string description)
     {
         var user = await _userRepository.GetUserById(id);
 
@@ -76,7 +76,7 @@ public class UserService : IUserService
         bankStatement.Description = description;
         bankStatement.SpentAmount = amount;
         bankStatement.TimeStamp = timeStamp;
-        bankStatement.UserId = Guid.Parse(id);
+        bankStatement.UserId = id;
         bankStatement.TransferAmount = -amount;
         bankStatement.Type = Types.withdrawal;
 
@@ -86,14 +86,14 @@ public class UserService : IUserService
         await _bankStatementRepository.WithdrawAction(bankStatement);
     }
 
-    public async Task<List<BankStatement>> GetStatementByDateRange(string userId, DateTime startDate, DateTime endDate)
+    public async Task<List<BankStatement>> GetStatementByDateRange(Guid userId, DateTime startDate, DateTime endDate)
     {
         if (startDate > endDate) throw new Exception("Start date must be earlier than end date.");
 
         return await _bankStatementRepository.GetStatementByDate(startDate, endDate, userId);
     }
 
-    public async Task<decimal> GetBalance(string id)
+    public async Task<decimal> GetBalance(Guid id)
     {
         var user = await _userRepository.GetUserById(id);
         if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
@@ -101,7 +101,7 @@ public class UserService : IUserService
         return user.Balance;
     }
 
-    public async Task Transfer(string id, string phoneNumber, decimal amount)
+    public async Task Transfer(Guid id, string phoneNumber, decimal amount)
     {
         var user = await _userRepository.GetUserById(id);
         if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
@@ -115,7 +115,7 @@ public class UserService : IUserService
 
         bankStatement.ReceivedAmount = amount;
         bankStatement.TimeStamp = DateTime.UtcNow;
-        bankStatement.UserId = Guid.Parse(id);
+        bankStatement.UserId = id;
         bankStatement.TransferAmount = amount;
         bankStatement.Type = Types.transfer;
         bankStatement.Description = $"Transfer amount from {phoneNumber} with amount of {amount}";
@@ -176,7 +176,7 @@ public class UserService : IUserService
         await _userRepository.Update(user);
     }
 
-    public async Task<UserDetailsResponse> GetUserDetails(string userId)
+    public async Task<UserDetailsResponse> GetUserDetails(Guid userId)
     {
         var user = await _userRepository.GetUserById(userId);
         if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
@@ -213,12 +213,12 @@ public class UserService : IUserService
         return new string(result);
     }
 
-    public async Task<List<BankStatement>> TransferDetails(string userId, string name)
+    public async Task<List<BankStatement>> TransferDetails(Guid userId, string name)
     {
         return await _bankStatementRepository.ReceivedDetails(userId, name);
     }
 
-    public async Task<ContactDetailsResponse> GetContactDetails(string id)
+    public async Task<ContactDetailsResponse> GetContactDetails(Guid id)
     {
         var user = await _userRepository.GetUserById(id);
         if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
@@ -229,7 +229,7 @@ public class UserService : IUserService
         return contactDetails;
     }
 
-    public async Task<CardDetailsResponse> ShowCardDetails(string id, string password, string cardID)
+    public async Task<CardDetailsResponse> ShowCardDetails(Guid id, string password, string cardID)
     {
         var user = await _userRepository.GetUserById(id);
         if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
@@ -261,7 +261,7 @@ public class UserService : IUserService
 
 
 
-    public async Task<AddCardsResponse> AddCard(string userId)
+    public async Task<AddCardsResponse> AddCard(Guid userId)
     {
         var user = await _userRepository.GetUserById(userId);
         if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
@@ -297,7 +297,7 @@ public class UserService : IUserService
         return cardResponse;
     }
 
-    public async Task DeleteCard(string cardId, string userId)
+    public async Task DeleteCard(string cardId, Guid userId)
     {
         var user = await _userRepository.GetUserById(userId);
         if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
@@ -309,10 +309,10 @@ public class UserService : IUserService
         await _userRepository.DeleteCard(card);
     }
 
-    public async Task BlockCard(string cardId, string userId)
+    public async Task BlockCard(string cardId, Guid userId)
     {
         var cards = await _cardRepository.GetCards();
-        var card = cards?.Where(x => x.Id.ToString() == cardId && x.UserId.ToString() == userId).FirstOrDefault();
+        var card = cards?.Where(x => x.Id.ToString() == cardId && x.UserId == userId).FirstOrDefault();
 
         if (card == null)
         {
@@ -325,11 +325,11 @@ public class UserService : IUserService
         await _cardRepository.SaveChanges();
     }
 
-    public async Task ActivateCard(string cardId, string userId)
+    public async Task ActivateCard(string cardId, Guid userId)
     {
         var cards = await _cardRepository.GetCards();
 
-        var card = cards?.Where(x => x.Id.ToString() == cardId && x.UserId.ToString() == userId).FirstOrDefault();
+        var card = cards?.Where(x => x.Id.ToString() == cardId && x.UserId == userId).FirstOrDefault();
         if (card == null)
         {
             throw new Exception("Card not found");
@@ -339,7 +339,7 @@ public class UserService : IUserService
         await _cardRepository.SaveChanges();
     }
 
-    public async Task<List<Transaction>> GetTransactionsAsync(string userId)
+    public async Task<List<Transaction>> GetTransactionsAsync(Guid userId)
     {
 
         var rez = await _bankStatementRepository.GetAllStatements(userId);
@@ -354,10 +354,10 @@ public class UserService : IUserService
 
 
     }
-    public async Task<List<Card>> GetAllCardsAsync(string userId)
+    public async Task<List<Card>> GetAllCardsAsync(Guid userId)
     {
         var cards = await _cardRepository.GetCards();
-        return cards.Where(x => x.UserId.ToString() == userId).Select(x => new Card
+        return cards.Where(x => x.UserId == userId).Select(x => new Card
         {
             Id = x.Id,
             FirstName = x.FirstName,

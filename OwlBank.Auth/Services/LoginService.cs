@@ -44,7 +44,7 @@ public class LoginService : ILoginService
                 user.AccountLocketAt = DateTime.UtcNow;
 
                 await _userRepository.Update(user);
-                throw new Exception($"Your account has been locked.");
+                throw new ProblemException($"Your account has been locked.", $"Your account has been locked due to multiple failed login attempts.");
             }
 
             user.LoginAttempt++;

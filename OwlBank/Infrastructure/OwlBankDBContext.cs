@@ -16,9 +16,8 @@ public class OwlBankDBContext(DbContextOptions<OwlBankDBContext> option) : DbCon
         modelBuilder.Entity<User>()
             .Property(u => u.Email)
             .IsRequired();
-            
+
         modelBuilder.Entity<User>()
-            .HasIndex(u => u.Email)
-            .IsUnique();
+            .HasIndex(u => new { u.LastName, u.FirstName });
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OwlBank.DTOs.UserDTO;
+using OwlBank.Exceptions;
 using OwlBank.Models;
 
 namespace OwlBank.Repository;
@@ -21,15 +22,15 @@ public class UserRepository : IUserRepository
         return addUser.Entity;
     }
 
-    public async Task DeleteUser(string? id)
+    public async Task DeleteUser(Guid id)
     {
         var removeUser = _dbContext.Users.Remove(_dbContext.Users.Find(id));
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task UpdateUser(string? id, UpdateUserRequest userRequest)
+    public async Task UpdateUser(Guid id, UpdateUserRequest userRequest)
     {
-        var updateUser = await _dbContext.Users.Where(User=>User.ID.ToString()==id ).FirstOrDefaultAsync();
+        var updateUser = await _dbContext.Users.Where(User=>User.ID == id).FirstOrDefaultAsync();
         if (updateUser == null) return;
         
         if (userRequest.FirstName != null) updateUser.FirstName = userRequest.FirstName;
@@ -41,9 +42,9 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync();
     }
     
-    public async Task<User?> GetUserById(string id)
+    public async Task<User?> GetUserById(Guid id)
     {
-        return await _dbContext.Users.Include(u => u.Cards).FirstOrDefaultAsync(u => u.ID.ToString() == id);
+        return await _dbContext.Users.Include(u => u.Cards).FirstOrDefaultAsync(u => u.ID == id);
     }
 
     public async Task<User?> GetUserByEmail(string email)
