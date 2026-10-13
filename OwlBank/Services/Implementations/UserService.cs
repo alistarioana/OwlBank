@@ -117,9 +117,6 @@ public class UserService : IUserService
         }
 
         throw new ProblemException("Conflict", "The account was modified concurrently. Please try again.");
-
-
-
     }
 
     public async Task<List<BankStatement>> GetStatementByDateRange(Guid userId, DateTime startDate, DateTime endDate)
