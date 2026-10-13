@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 
 namespace OwlBank.Controllers;
-using OwlBank.Models;
-using OwlBank.Services;
 using Microsoft.AspNetCore.Mvc;
 using OwlBank.DTOs.UserDTO;
+using OwlBank.Extensions;
+using OwlBank.Models;
+using OwlBank.Services;
 
 [ApiController]
 [Route("users")]
@@ -25,19 +26,19 @@ public class AdminController : ControllerBase
     }
 
     [HttpPost("roles")]
-    public async Task UpdateRole(string id, List<string> roles)
+    public async Task UpdateRole(Guid id, List<string> roles)
     {
         await _service.UpdateUserRole(id, roles);
     }
 
     [HttpPatch("reset-password/{id}")]
-    public async Task UpdatePassword([FromRoute] string id)
+    public async Task UpdatePassword([FromRoute] Guid id)
     {
         await _service.UpdatePassword(id);
     }
 
     [HttpDelete("delete-user/{userId}")]
-    public async Task DeleteUser([FromRoute] string userId)
+    public async Task DeleteUser([FromRoute] Guid userId)
     {
         await _service.DeleteUser(userId);
     }

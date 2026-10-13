@@ -18,6 +18,10 @@ public class OwlBankDBContext(DbContextOptions<OwlBankDBContext> option) : DbCon
             .IsRequired();
 
         modelBuilder.Entity<User>()
+            .Property(u => u.Version)
+            .IsRowVersion();
+
+        modelBuilder.Entity<User>()
             .HasIndex(u => new { u.LastName, u.FirstName });
     }
 }

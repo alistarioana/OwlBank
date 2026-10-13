@@ -1,16 +1,19 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
-using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.IdentityModel.Tokens;
 using OwlBank.DTOs.UserDTO;
 using OwlBank.Exceptions;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Authentication;
+using System.Security.Claims;
+using System.Text;
 
 namespace OwlBank.Services;
 
-using OwlBank.Repository;
+using Microsoft.Build.Framework;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.TestModels.ConcurrencyModel;
 using OwlBank.Models;
+using OwlBank.Repository;
 
 [Dependency(typeof(IUserService))]
 public class UserService : IUserService
@@ -38,52 +41,85 @@ public class UserService : IUserService
 
     public async Task Deposit(Guid id, decimal amount, string description)
     {
-        var user = await _userRepository.GetUserById(id);
-
-        if (user == null)
-            throw new ProblemException("User not found", "The specified user could not be found.");
-
         if (amount <= 0)
             throw new ProblemException("Invalid amount", "The specified amount is invalid.");
 
-        var timeStamp = DateTime.UtcNow;
-        BankStatement bankStatement = new BankStatement();
-        bankStatement.Description = description;
-        bankStatement.ReceivedAmount = amount;
-        bankStatement.TimeStamp = timeStamp;
-        bankStatement.UserId = id;
-        bankStatement.TransferAmount = amount;
-        bankStatement.Type = Types.deposit;
-        user.Balance += amount;
+        const int maxAttempts = 3;
 
-        await _userRepository.SaveChanges();
-        await _bankStatementRepository.DepositAction(bankStatement);
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+                throw new ProblemException("User not found", "The specified user could not be found.");
+
+            user.Balance += amount;
+
+            try
+            {
+                await _bankStatementRepository.DepositAction(new BankStatement
+                {
+                    Description = description,
+                    ReceivedAmount = amount,
+                    TimeStamp = DateTime.UtcNow,
+                    UserId = id,
+                    Type = Types.deposit
+                });
+
+                await _userRepository.SaveChanges();
+                return;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                _userRepository.GetChangeTracker().Clear();
+            }
+        }
+
+        throw new ProblemException("Conflict", "The account was modified concurrently. Please try again.");
     }
 
     public async Task Withdraw(Guid id, decimal amount, string description)
     {
-        var user = await _userRepository.GetUserById(id);
+        if (amount <= 0)
+            throw new ProblemException("Invalid amount", "The specified amount is invalid.");
 
-        if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
+        const int maxAttempts = 3;
 
-        if (amount <= 0) throw new ProblemException("Invalid amount", "The specified amount is invalid.");
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            var user = await _userRepository.GetUserById(id);
 
-        if (user.Balance < amount)
-            throw new ProblemException("Insufficient funds", "The specified user has insufficient funds.");
+            if (user == null)
+                throw new ProblemException("User not found", "The specified user could not be found.");
 
-        var timeStamp = DateTime.UtcNow;
-        BankStatement bankStatement = new BankStatement();
-        bankStatement.Description = description;
-        bankStatement.SpentAmount = amount;
-        bankStatement.TimeStamp = timeStamp;
-        bankStatement.UserId = id;
-        bankStatement.TransferAmount = -amount;
-        bankStatement.Type = Types.withdrawal;
+            if (user.Balance < amount)
+                throw new ProblemException("Insufficient funds", "The specified user has insufficient funds.");
 
-        user.Balance -= amount;
+            user.Balance -= amount;
 
-        await _userRepository.SaveChanges();
-        await _bankStatementRepository.WithdrawAction(bankStatement);
+            try
+            {
+                await _bankStatementRepository.WithdrawAction(new BankStatement
+                {
+                    Description = description,
+                    SpentAmount = amount,
+                    TransferAmount = -amount,
+                    TimeStamp = DateTime.UtcNow,
+                    UserId = id,
+                    Type = Types.withdrawal
+                });
+                await _userRepository.SaveChanges();   
+                return;                                
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                _userRepository.GetChangeTracker().Clear();   
+            }
+        }
+
+        throw new ProblemException("Conflict", "The account was modified concurrently. Please try again.");
+
+
+
     }
 
     public async Task<List<BankStatement>> GetStatementByDateRange(Guid userId, DateTime startDate, DateTime endDate)

@@ -15,12 +15,18 @@ public class AdminRepository : IAdminRepository
     }
     public async Task<List<User>> GetUsers()
     {
-        return await _dbContext.Users.Include(x => x.Cards).ToListAsync();
+        return await _dbContext.Users
+            .AsNoTracking()
+            .Include(x => x.Cards)
+            .ToListAsync();
     }
 
-    public async Task<User?> FindUserById(string id)
+    public async Task<User?> FindUserById(Guid id)
     {
-        return await _dbContext.Users.Where(x => x.ID.ToString() == id).FirstOrDefaultAsync();
+        return await _dbContext.Users
+            .AsNoTracking()
+            .Where(x => x.ID == id)
+            .FirstOrDefaultAsync();
     }
 
     public async Task SaveChanges()
@@ -28,9 +34,9 @@ public class AdminRepository : IAdminRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task DeleteUser(string id)
+    public async Task DeleteUser(Guid id)
     {
-        var user = await _dbContext.Users.Where(x => x.ID.ToString() == id).FirstOrDefaultAsync();
+        var user = await _dbContext.Users.Where(x => x.ID == id).FirstOrDefaultAsync();
         
         if (user == null) throw new ProblemException("User not found", "Unable to find user.");
         

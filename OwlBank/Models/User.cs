@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace OwlBank.Models;
 public class User
 {
@@ -16,4 +18,5 @@ public class User
     public int LoginAttempt { get; set; }
     public DateTime? AccountLocketAt { get; set; }
     public List<Card> Cards { get; set; } = new List<Card>();
+    public uint Version { get; set; }
 }  

@@ -53,7 +53,7 @@ public class AdminService : IAdminService
             return new string(cardNumber);
         }
 
-        public async Task UpdateUserRole(string id, List<string> roles)
+        public async Task UpdateUserRole(Guid id, List<string> roles)
         {
             var user = await _db.FindUserById(id);
             if (user == null)
@@ -72,7 +72,7 @@ public class AdminService : IAdminService
             await _db.SaveChanges();
         }
         
-        public async Task UpdatePassword(string id)
+        public async Task UpdatePassword(Guid id)
         {
             var user = await _db.FindUserById(id);
             if (user == null)
@@ -85,7 +85,7 @@ public class AdminService : IAdminService
 
         }
 
-        public async Task DeleteUser(string id)
+        public async Task DeleteUser(Guid id)
         {
             await _db.DeleteUser(id);
         }

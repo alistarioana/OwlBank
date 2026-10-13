@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using OwlBank.DTOs.UserDTO;
 using OwlBank.Exceptions;
 using OwlBank.Models;
@@ -24,13 +25,17 @@ public class UserRepository : IUserRepository
 
     public async Task DeleteUser(Guid id)
     {
-        var removeUser = _dbContext.Users.Remove(_dbContext.Users.Find(id));
+        var removeUser = _dbContext.Users
+            .Remove(_dbContext.Users.Find(id));
+
         await _dbContext.SaveChangesAsync();
     }
 
     public async Task UpdateUser(Guid id, UpdateUserRequest userRequest)
     {
-        var updateUser = await _dbContext.Users.Where(User=>User.ID == id).FirstOrDefaultAsync();
+        var updateUser = await _dbContext.Users
+            .Where(User=>User.ID == id)
+            .FirstOrDefaultAsync();
         if (updateUser == null) return;
         
         if (userRequest.FirstName != null) updateUser.FirstName = userRequest.FirstName;
@@ -44,12 +49,17 @@ public class UserRepository : IUserRepository
     
     public async Task<User?> GetUserById(Guid id)
     {
-        return await _dbContext.Users.Include(u => u.Cards).FirstOrDefaultAsync(u => u.ID == id);
+        return await _dbContext.Users
+            .Include(u => u.Cards)
+            .FirstOrDefaultAsync(u => u.ID == id);
     }
 
     public async Task<User?> GetUserByEmail(string email)
     {
-        var user = await _dbContext.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+        var user = await _dbContext.Users
+            .AsNoTracking()
+            .Where(x => x.Email == email)
+            .FirstOrDefaultAsync();
        
         return user;
     }
@@ -61,7 +71,10 @@ public class UserRepository : IUserRepository
 
     public Task<User?> GetUserByPhoneNumber(string phoneNumber)
     {
-        var user =_dbContext.Users.Where(x => x.PhoneNumber == phoneNumber);
+        var user =_dbContext.Users
+            .AsNoTracking()
+            .Where(x => x.PhoneNumber == phoneNumber);
+        
         return user.FirstOrDefaultAsync();
     }
     
@@ -81,5 +94,10 @@ public class UserRepository : IUserRepository
     {
         _dbContext.Cards.Remove(card);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public ChangeTracker GetChangeTracker()
+    {
+        return _dbContext.ChangeTracker;
     }
 }

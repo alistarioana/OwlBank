@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using OwlBank.Models;
 
 namespace OwlBank.Repository;
@@ -18,6 +19,7 @@ public class BankStatementRepository : IBankStatementRepository
         _context.SaveChanges();
         return Task.CompletedTask;
     }
+
     public Task TransferAction(BankStatement bankStatement)
     {
         _context.BankStatement.Add(bankStatement);
@@ -42,6 +44,7 @@ public class BankStatementRepository : IBankStatementRepository
             DateTimeKind.Utc);
 
         var statement = _context.BankStatement
+            .AsNoTracking()
             .Where(x => x.UserId == userId && x.TimeStamp >= startDate && x.TimeStamp <= endDate);
         
         return statement.ToList();
@@ -50,12 +53,15 @@ public class BankStatementRepository : IBankStatementRepository
     public async Task<List<BankStatement>> ReceivedDetails(Guid userId, string name)
     {
        return _context.BankStatement
+            .AsNoTracking()
             .Where(x => x.UserId == userId)
             .Where(x => x.Description.ToLower().Contains(name.ToLower())).ToList();
     }
 
     public async Task<List<BankStatement>> GetAllStatements(Guid userId)
     {
-        return _context.BankStatement.Where(x => x.UserId == userId).ToList();
+        return _context.BankStatement
+            .AsNoTracking()
+            .Where(x => x.UserId == userId).ToList();
     }
 }

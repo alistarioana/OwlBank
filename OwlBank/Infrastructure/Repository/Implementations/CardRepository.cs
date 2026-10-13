@@ -21,6 +21,8 @@ public class CardRepository: ICardRepository
 
     public async Task<List<Card>> GetCards()
     {
-        return await _dbContext.Cards.ToListAsync();
+        return await _dbContext.Cards
+            .AsNoTracking()
+            .ToListAsync();
     }
 }
