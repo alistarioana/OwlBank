@@ -9,9 +9,7 @@ using System.Text;
 
 namespace OwlBank.Services;
 
-using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestModels.ConcurrencyModel;
 using OwlBank.Models;
 using OwlBank.Repository;
 

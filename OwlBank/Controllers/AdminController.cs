@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace OwlBank.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using OwlBank.DTOs.UserDTO;
-using OwlBank.Extensions;
 using OwlBank.Models;
 using OwlBank.Services;
 

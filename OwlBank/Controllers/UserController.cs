@@ -2,13 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OwlBank.DTOs.UserDTO;
 using OwlBank.Models;
-using System.Security.Claims;
-
-namespace OwlBank.Controllers;
-
-using OwlBank.Exceptions;
 using OwlBank.Extensions;
 using OwlBank.Services;
+
+namespace OwlBank.Controllers;
 
 [ApiController]
 [Route("users")]
