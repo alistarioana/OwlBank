@@ -1,18 +1,22 @@
 using OwlBank.Exceptions;
 
 namespace OwlBank.Services;
+
 using OwlBank.DTOs.UserDTO;
 using OwlBank.Repository;
 using OwlBank.Models;
+using OwlBank.Services.Interfaces;
 
 [Dependency(typeof(IAdminService))]
 public class AdminService : IAdminService
 {
         private readonly IAdminRepository _db;
+        private readonly IPasswordHasher _passwordHasher;
 
-        public AdminService(IAdminRepository db)
+    public AdminService(IAdminRepository db, IPasswordHasher passwordHasher)
         {
             _db = db;
+            _passwordHasher = passwordHasher;   
         }
 
         public async Task<List<UserResponse>> GetUsers()
@@ -72,17 +76,16 @@ public class AdminService : IAdminService
             await _db.SaveChanges();
         }
         
-        public async Task UpdatePassword(Guid id)
+        public async Task ResetPassword(Guid id)
         {
             var user = await _db.FindUserById(id);
             if (user == null)
             {
                 throw new ProblemException("User not found", "The specified user could not be found.");
             }
+            user.Password = _passwordHasher.HashPassword("OwlBank@123");
 
-            user.Password = BCrypt.Net.BCrypt.HashPassword("OwlBank2026");
             await _db.SaveChanges();
-
         }
 
         public async Task DeleteUser(Guid id)

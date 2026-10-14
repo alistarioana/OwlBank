@@ -9,9 +9,13 @@ using System.Text;
 
 namespace OwlBank.Services;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OwlBank.Models;
 using OwlBank.Repository;
+using OwlBank.Auth;
+using OwlBank.Extensions;
+using OwlBank.Services.Interfaces;
 
 [Dependency(typeof(IUserService))]
 public class UserService : IUserService
@@ -19,12 +23,14 @@ public class UserService : IUserService
     private readonly IUserRepository _userRepository;
     private readonly ICardRepository _cardRepository;
     private readonly IBankStatementRepository _bankStatementRepository;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public UserService(IUserRepository userRepository, IBankStatementRepository bankStatementRepository, ICardRepository cardRepository)
+    public UserService(IUserRepository userRepository, IBankStatementRepository bankStatementRepository, ICardRepository cardRepository, IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
         _bankStatementRepository = bankStatementRepository;
         _cardRepository = cardRepository;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task DeleteUser(Guid id)
@@ -156,7 +162,7 @@ public class UserService : IUserService
     public async Task<string> Login(LoginRequest userRequest)
     {
         var user = await _userRepository.GetUserByEmail(userRequest.Email);
-        if (user == null || user.Password == null || !BCrypt.Net.BCrypt.Verify(userRequest.Password, user.Password))
+        if (user == null || user.Password == null || !_passwordHasher.VerifyPassword(userRequest.Password, user.Password))
         {
             throw new AuthenticationException("Invalid password");
         }
@@ -186,9 +192,9 @@ public class UserService : IUserService
             throw new Exception($"No user with email: {email} found.");
         }
 
-        if (user.Password == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+        if (user.Password == null || !_passwordHasher.VerifyPassword(password, user.Password))
         {
-            throw new Exception("Invalid password");
+            throw new Exception("Invalid password");    
         }
 
         if (newpassword != confirmPassword)
@@ -196,11 +202,11 @@ public class UserService : IUserService
             throw new Exception("Passwords does not match");
         }
 
-        if (BCrypt.Net.BCrypt.Verify(newpassword, user.Password))
+        if (_passwordHasher.VerifyPassword(newpassword, user.Password))
         {
             throw new Exception("Passwords cannot be set as the old password.");
         }
-        user.Password = BCrypt.Net.BCrypt.HashPassword(newpassword);
+        user.Password = _passwordHasher.HashPassword(newpassword);
         await _userRepository.Update(user);
     }
 
@@ -262,7 +268,7 @@ public class UserService : IUserService
         var user = await _userRepository.GetUserById(id);
         if (user == null) throw new ProblemException("User not found", "The specified user could not be found.");
 
-        if (user.Password == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+        if (user.Password == null || !_passwordHasher.VerifyPassword(password, user.Password))
         {
             throw new Exception("Invalid password.");
         }

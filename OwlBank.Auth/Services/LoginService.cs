@@ -8,16 +8,19 @@ using OwlBank.Auth.Contracts.Interfaces;
 using OwlBank.Exceptions;
 using OwlBank.Models;
 using OwlBank.Repository;
+using OwlBank.Services.Interfaces;
 
 namespace OwlBank.Auth.Services;
 
 public class LoginService : ILoginService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public LoginService(IUserRepository userRepository)
+    public LoginService(IUserRepository userRepository, IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
+        _passwordHasher = passwordHasher;
     }
     public async Task<string> Login(LoginRequest userRequest)
     {
@@ -28,7 +31,7 @@ public class LoginService : ILoginService
             throw new ProblemException("User not Found", $"No user with email {userRequest.Email} registered.");
         }
 
-        bool passwordValid = BCrypt.Net.BCrypt.Verify(userRequest.Password, user.Password);
+        bool passwordValid = _passwordHasher.VerifyPassword(userRequest.Password, user.Password);
 
 
         if (!passwordValid)
@@ -100,7 +103,6 @@ public class LoginService : ILoginService
                 .SetConfirmationPassword(userRequest.Password)
                 .Build();
 
-
         Random random = new Random();
         Card card = new Card();
         card.FirstName = userRequest.FirstName;
@@ -110,7 +112,7 @@ public class LoginService : ILoginService
         card.CVV = string.Concat(Enumerable.Range(0, 3)
             .Select(_ => random.Next(0, 9)));
         card.ExpirationDate = DateTime.UtcNow.AddYears(10);
-
+        create.Password = _passwordHasher.HashPassword(create.Password);    
         create.Cards.Add(card);
 
         await _userRepository.AddUser(create);
@@ -125,7 +127,7 @@ public class LoginService : ILoginService
             throw new Exception($"No user with email: {email} found.");
         }
 
-        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+        if (!_passwordHasher.VerifyPassword(password, user.Password))
         {
             throw new Exception("Invalid password");
         }
@@ -135,11 +137,11 @@ public class LoginService : ILoginService
             throw new Exception("Passwords does not match");
         }
 
-        if (BCrypt.Net.BCrypt.Verify(newpassword,user.Password))
+        if (_passwordHasher.VerifyPassword(newpassword, user.Password))
         {
             throw new Exception("Passwords cannot be set as the old password.");
         }
-        user.Password =BCrypt.Net.BCrypt.HashPassword(newpassword);
+        user.Password = _passwordHasher.HashPassword(newpassword);
         await _userRepository.Update(user);
     }
 }

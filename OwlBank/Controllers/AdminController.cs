@@ -31,9 +31,9 @@ public class AdminController : ControllerBase
     }
 
     [HttpPatch("reset-password/{id}")]
-    public async Task UpdatePassword([FromRoute] Guid id)
+    public async Task ResetPassword([FromRoute] Guid id)
     {
-        await _service.UpdatePassword(id);
+        await _service.ResetPassword(id);
     }
 
     [HttpDelete("delete-user/{userId}")]

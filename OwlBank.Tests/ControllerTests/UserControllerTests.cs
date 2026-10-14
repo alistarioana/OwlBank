@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
@@ -10,6 +11,7 @@ using OwlBank.DTOs.UserDTO;
 using OwlBank.Models;
 using OwlBank.Repository;
 using OwlBank.Services;
+using OwlBank.Services.Interfaces;
 using Xunit;
 
 namespace TestProject1.ControllerTests;
@@ -104,8 +106,9 @@ public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         Mock<IBankStatementRepository> bankRepository = new Mock<IBankStatementRepository>();
         Mock<ICardRepository> cardRepository = new Mock<ICardRepository>();
+        Mock<IPasswordHasher> passwordHasher = new Mock<IPasswordHasher>();
 
-        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object);
+        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object, passwordHasher.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(async () =>
@@ -124,8 +127,9 @@ public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         Mock<IBankStatementRepository> bankRepository = new Mock<IBankStatementRepository>();
         Mock<ICardRepository> cardRepository = new Mock<ICardRepository>();
+        Mock<IPasswordHasher> passwordHasher = new Mock<IPasswordHasher>();
 
-        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object);
+        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object, passwordHasher.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() =>
@@ -151,7 +155,8 @@ public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         userRepository.Setup(x => x.GetUserById(It.IsAny<Guid>())).ReturnsAsync(user);
 
-        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object);
+        Mock<IPasswordHasher> passwordHasher = new Mock<IPasswordHasher>();
+        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object, passwordHasher.Object);
 
         // Act
         await userService.Deposit(user.ID, 100, "Test");

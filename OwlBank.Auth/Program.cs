@@ -4,7 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OwlBank.Auth.Contracts.Interfaces;
 using OwlBank.Exceptions;
+using OwlBank.Extensions;
 using OwlBank.Repository;
+using OwlBank.Services.Implementations;
+using OwlBank.Services.Interfaces;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +53,7 @@ builder.Services.AddExceptionHandler<ProblemExceptionHandler>();
 // Register application services from the referenced OwlBank project
 builder.Services.AddScoped<ILoginService, OwlBank.Auth.Services.LoginService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 var app = builder.Build();
 

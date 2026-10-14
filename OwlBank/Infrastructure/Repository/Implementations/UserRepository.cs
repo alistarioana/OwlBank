@@ -17,7 +17,6 @@ public class UserRepository : IUserRepository
 
     public async Task<User> AddUser(User user)
     {
-        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
         var addUser = await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
         return addUser.Entity;
@@ -57,7 +56,6 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetUserByEmail(string email)
     {
         var user = await _dbContext.Users
-            .AsNoTracking()
             .Where(x => x.Email == email)
             .FirstOrDefaultAsync();
        
