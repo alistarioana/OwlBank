@@ -13,24 +13,10 @@ public class BankStatementRepository : IBankStatementRepository
         _context = context;
     }
     
-    public Task DepositAction(BankStatement bankStatement)
+    public async Task SaveBankStatemant(BankStatement bankStatement)
     { 
         _context.BankStatement.Add(bankStatement);
-        _context.SaveChanges();
-        return Task.CompletedTask;
-    }
-
-    public Task TransferAction(BankStatement bankStatement)
-    {
-        _context.BankStatement.Add(bankStatement);
-        _context.SaveChanges();
-        return Task.CompletedTask;
-    }
-    public Task WithdrawAction(BankStatement bankStatement)
-    {
-        _context.BankStatement.Add(bankStatement);
-        _context.SaveChanges();
-        return Task.CompletedTask;
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<BankStatement>> GetStatementByDate(DateTime startDate, DateTime endDate, Guid? userId)

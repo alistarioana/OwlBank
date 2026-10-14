@@ -56,7 +56,7 @@ public class UserService : IUserService
 
             try
             {
-                await _bankStatementRepository.DepositAction(new BankStatement
+                await _bankStatementRepository.SaveBankStatemant(new BankStatement
                 {
                     Description = description,
                     ReceivedAmount = amount,
@@ -65,7 +65,6 @@ public class UserService : IUserService
                     Type = Types.deposit
                 });
 
-                await _userRepository.SaveChanges();
                 return;
             }
             catch (DbUpdateConcurrencyException)
@@ -98,7 +97,7 @@ public class UserService : IUserService
 
             try
             {
-                await _bankStatementRepository.WithdrawAction(new BankStatement
+                await _bankStatementRepository.SaveBankStatemant(new BankStatement
                 {
                     Description = description,
                     SpentAmount = amount,
@@ -107,7 +106,6 @@ public class UserService : IUserService
                     UserId = id,
                     Type = Types.withdrawal
                 });
-                await _userRepository.SaveChanges();   
                 return;                                
             }
             catch (DbUpdateConcurrencyException)
@@ -154,8 +152,7 @@ public class UserService : IUserService
         bankStatement.Description = $"Transfer amount from {phoneNumber} with amount of {amount}";
         user.Balance += amount;
 
-        await _userRepository.SaveChanges();
-        await _bankStatementRepository.TransferAction(bankStatement);
+        await _bankStatementRepository.SaveBankStatemant(bankStatement);
     }
 
     public async Task<string> Login(LoginRequest userRequest)
@@ -313,7 +310,6 @@ public class UserService : IUserService
         card.User = user;
         user.Cards.Add(card);
         await _userRepository.AddCard(card);
-        await _userRepository.SaveChanges();
 
         AddCardsResponse cardResponse = new AddCardsResponse();
         cardResponse.CardNumber = card.CardNumber;

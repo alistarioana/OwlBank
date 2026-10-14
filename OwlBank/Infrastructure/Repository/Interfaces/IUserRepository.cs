@@ -13,7 +13,6 @@ public interface IUserRepository
     public Task UpdateUser(Guid id, UpdateUserRequest userRequest);
     public Task<User?> GetUserById(Guid id);
     public Task<User?> GetUserByEmail(string email);
-    public Task SaveChanges();
     public Task<User?> GetUserByPhoneNumber(string phoneNumber);
     public Task Update(User user);
     public Task<Card> AddCard(Card card);

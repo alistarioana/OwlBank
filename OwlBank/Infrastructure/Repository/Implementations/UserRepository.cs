@@ -64,11 +64,6 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public async Task SaveChanges()
-    {
-        await _dbContext.SaveChangesAsync();
-    }
-
     public Task<User?> GetUserByPhoneNumber(string phoneNumber)
     {
         var user =_dbContext.Users
