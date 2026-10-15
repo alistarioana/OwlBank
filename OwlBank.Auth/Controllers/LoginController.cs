@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using OwlBank.Auth.Contracts.DTOs;
 using OwlBank.Auth.Contracts.Interfaces;
+using OwlBank.Extensions;
+using OwlBank.Models;
+using System.Security.Cryptography;
 
 namespace OwlBank.Auth.Controllers;
 
@@ -9,7 +12,7 @@ namespace OwlBank.Auth.Controllers;
 public class LoginController : ControllerBase
 {
     private readonly ILoginService _service;
-
+        
     public LoginController(ILoginService service)
     {
         _service = service;
@@ -26,8 +29,12 @@ public class LoginController : ControllerBase
     [FromBody] LoginRequest userRequest)
     {
         var token = await _service.Login(userRequest);
+
+
         return Ok(token);
     }
+
+   
 
     [HttpPatch("resetpassword")]
     public async Task ResetPassword([FromQuery] string email, [FromQuery] string password,

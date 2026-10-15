@@ -19,4 +19,7 @@ public class User
     public DateTime? AccountLocketAt { get; set; }
     public List<Card> Cards { get; set; } = new List<Card>();
     public uint Version { get; set; }
+
+    public string RefreshToken { get; set; } = string.Empty;
+    public DateTime RefreshTokenExpireDate { get; set; }
 }  

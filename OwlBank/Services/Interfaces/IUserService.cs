@@ -28,4 +28,5 @@ public interface IUserService
     public Task<List<Transaction>> GetTransactionsAsync(Guid userId);
 
     public Task<List<Card>> GetAllCardsAsync(Guid userId);
+    public Task<string> RegenerateTokens(string refreshToken);
 }

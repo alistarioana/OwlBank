@@ -107,8 +107,9 @@ public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
         Mock<IBankStatementRepository> bankRepository = new Mock<IBankStatementRepository>();
         Mock<ICardRepository> cardRepository = new Mock<ICardRepository>();
         Mock<IPasswordHasher> passwordHasher = new Mock<IPasswordHasher>();
+        Mock<IRefreshTokenCookieService> refreshTokenService = new Mock<IRefreshTokenCookieService>();
 
-        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object, passwordHasher.Object);
+        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object, passwordHasher.Object, refreshTokenService.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(async () =>
@@ -128,8 +129,10 @@ public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
         Mock<IBankStatementRepository> bankRepository = new Mock<IBankStatementRepository>();
         Mock<ICardRepository> cardRepository = new Mock<ICardRepository>();
         Mock<IPasswordHasher> passwordHasher = new Mock<IPasswordHasher>();
+        Mock<IRefreshTokenCookieService> refreshTokenService = new Mock<IRefreshTokenCookieService>();
 
-        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object, passwordHasher.Object);
+        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object, passwordHasher.Object, refreshTokenService.Object);
+
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() =>
@@ -156,7 +159,8 @@ public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
         userRepository.Setup(x => x.GetUserById(It.IsAny<Guid>())).ReturnsAsync(user);
 
         Mock<IPasswordHasher> passwordHasher = new Mock<IPasswordHasher>();
-        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object, passwordHasher.Object);
+        Mock<IRefreshTokenCookieService> refreshTokenService = new Mock<IRefreshTokenCookieService>();
+        UserService userService = new UserService(userRepository.Object, bankRepository.Object, cardRepository.Object, passwordHasher.Object, refreshTokenService.Object);
 
         // Act
         await userService.Deposit(user.ID, 100, "Test");

@@ -53,6 +53,12 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.ID == id);
     }
 
+    public async Task<User?> GetUserByRefreshToken(string refreshToken)
+    {
+        return await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+    }
+
     public async Task<User?> GetUserByEmail(string email)
     {
         var user = await _dbContext.Users
@@ -92,5 +98,10 @@ public class UserRepository : IUserRepository
     public ChangeTracker GetChangeTracker()
     {
         return _dbContext.ChangeTracker;
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await _dbContext.SaveChangesAsync();
     }
 }

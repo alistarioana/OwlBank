@@ -17,6 +17,8 @@ public interface IUserRepository
     public Task Update(User user);
     public Task<Card> AddCard(Card card);
     public Task DeleteCard(Card card);
-
+    public Task<User?> GetUserByRefreshToken(string refreshToken);
     public ChangeTracker GetChangeTracker();
+    public Task SaveChangesAsync();
+
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 using OwlBank.Auth.Contracts.Interfaces;
 using OwlBank.Exceptions;
 using OwlBank.Extensions;
@@ -36,6 +37,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddProblemDetails(options =>
 {
     options.CustomizeProblemDetails = ctx => 
@@ -54,6 +56,7 @@ builder.Services.AddExceptionHandler<ProblemExceptionHandler>();
 builder.Services.AddScoped<ILoginService, OwlBank.Auth.Services.LoginService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IRefreshTokenCookieService, RefreshTokenCookieService>();
 
 var app = builder.Build();
 

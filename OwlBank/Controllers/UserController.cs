@@ -104,4 +104,15 @@ public class UserController : ControllerBase
         [HttpGet("get-all-cards")]
         public async Task<List<Card>> GetAllCards() => 
             await _service.GetAllCardsAsync(UserId);
+
+    [AllowAnonymous]
+    [HttpPost("regenerate-token")]
+    public async Task<ActionResult<string>> RegenerateToken()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+
+        var token = await _service.RegenerateTokens(refreshToken);
+
+        return Ok(token);   
+    }
 }

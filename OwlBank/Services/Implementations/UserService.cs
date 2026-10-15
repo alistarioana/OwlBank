@@ -16,6 +16,8 @@ using OwlBank.Repository;
 using OwlBank.Auth;
 using OwlBank.Extensions;
 using OwlBank.Services.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 [Dependency(typeof(IUserService))]
 public class UserService : IUserService
@@ -24,13 +26,20 @@ public class UserService : IUserService
     private readonly ICardRepository _cardRepository;
     private readonly IBankStatementRepository _bankStatementRepository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IRefreshTokenCookieService _refreshTokenCookieService;
 
-    public UserService(IUserRepository userRepository, IBankStatementRepository bankStatementRepository, ICardRepository cardRepository, IPasswordHasher passwordHasher)
+    public UserService(
+        IUserRepository userRepository,
+        IBankStatementRepository bankStatementRepository,
+        ICardRepository cardRepository, 
+        IPasswordHasher passwordHasher, 
+        IRefreshTokenCookieService refreshTokenCookieService)
     {
         _userRepository = userRepository;
         _bankStatementRepository = bankStatementRepository;
         _cardRepository = cardRepository;
         _passwordHasher = passwordHasher;
+        _refreshTokenCookieService = refreshTokenCookieService;
     }
 
     public async Task DeleteUser(Guid id)
@@ -166,21 +175,10 @@ public class UserService : IUserService
         {
             throw new AuthenticationException("Invalid password");
         }
-        var claims = new[]
-        {
-           new Claim(ClaimTypes.NameIdentifier, user.ID.ToString())
-       };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("rkjlngbaekj-jRNVWKrnb-ekfrjnvoern"));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.Now.AddDays(2),/// aici tre sa pun 5 h sau sa pun days
-            signingCredentials: creds
-        );
+        var jwt = _refreshTokenCookieService.GenerateToken(user);
 
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
         return jwt;
     }
 
@@ -400,5 +398,25 @@ public class UserService : IUserService
             UserId = x.UserId,
             IsBlocked = x.IsBlocked
         }).ToList();
+    }
+
+    public async Task<string> RegenerateTokens(string refreshToken)
+    {
+        var user = await _userRepository.GetUserByRefreshToken(refreshToken);
+
+        if(user == null)
+        {
+            throw new ProblemException("User not found", "The specified user could not be found.");
+        }
+
+        if(user.RefreshToken != refreshToken || user.RefreshTokenExpireDate <= DateTime.UtcNow)
+        {
+            throw new ProblemException("Refresh token not found or expired", "The specified refresh token could not be found or has expired.");
+        }
+
+        var token =_refreshTokenCookieService.GenerateToken(user);
+        _refreshTokenCookieService.SetRefreshToken(user);
+
+        return token;   
     }
 }

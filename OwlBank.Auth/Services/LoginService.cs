@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Authentication;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using OwlBank.Auth.Contracts.DTOs;
@@ -16,11 +17,13 @@ public class LoginService : ILoginService
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IRefreshTokenCookieService _refreshTokenCookieService;
 
-    public LoginService(IUserRepository userRepository, IPasswordHasher passwordHasher)
+    public LoginService(IUserRepository userRepository, IPasswordHasher passwordHasher, IRefreshTokenCookieService refreshTokenCookieService)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
+        _refreshTokenCookieService = refreshTokenCookieService;
     }
     public async Task<string> Login(LoginRequest userRequest)
     {
@@ -64,22 +67,12 @@ public class LoginService : ILoginService
 
         };
 
-        foreach (var role in user.UserRoles)
-        {
-            claims.Add(new Claim("Roles", role.ToString()));
+        var jwt = _refreshTokenCookieService.GenerateToken(user);
 
-        }
+        _refreshTokenCookieService.SetRefreshToken(user);
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("rkjlngbaekj-jRNVWKrnb-ekfrjnvoern"));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        await _userRepository.SaveChangesAsync();
 
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: creds
-        );
-
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
         return jwt;
     }
 
