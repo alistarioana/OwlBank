@@ -24,7 +24,6 @@ public class AdminRepository : IAdminRepository
     public async Task<User?> FindUserById(Guid id)
     {
         return await _dbContext.Users
-            .AsNoTracking()
             .Where(x => x.ID == id)
             .FirstOrDefaultAsync();
     }

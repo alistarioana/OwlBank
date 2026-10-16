@@ -13,10 +13,13 @@ public class AdminService : IAdminService
         private readonly IAdminRepository _db;
         private readonly IPasswordHasher _passwordHasher;
 
-    public AdminService(IAdminRepository db, IPasswordHasher passwordHasher)
+        private readonly IEmailSender _emailSender;
+
+    public AdminService(IAdminRepository db, IPasswordHasher passwordHasher, IEmailSender emailSender)
         {
             _db = db;
-            _passwordHasher = passwordHasher;   
+            _passwordHasher = passwordHasher;
+            _emailSender = emailSender;
         }
 
         public async Task<List<UserResponse>> GetUsers()
@@ -83,7 +86,13 @@ public class AdminService : IAdminService
             {
                 throw new ProblemException("User not found", "The specified user could not be found.");
             }
-            user.Password = _passwordHasher.HashPassword("OwlBank@123");
+        var templatePath = Path.Combine(AppContext.BaseDirectory, "EmailTemplates", "PasswordResetEmail.html");
+        var html = (await File.ReadAllTextAsync(templatePath))
+            .Replace("{{Name}}", user.FirstName)          // use whatever your name property is called
+            .Replace("{{LoginUrl}}", "http://localhost:4200/login");  // your real login URL
+
+        user.Password = _passwordHasher.HashPassword("OwlBank@123");
+            await _emailSender.SendAsync(user.Email, "Password Reset", html);
 
             await _db.SaveChanges();
         }

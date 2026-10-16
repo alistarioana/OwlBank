@@ -1,23 +1,13 @@
 using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.IdentityModel.Tokens;
 using OwlBank.DTOs.UserDTO;
 using OwlBank.Exceptions;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
-using System.Security.Claims;
-using System.Text;
-
-namespace OwlBank.Services;
-
-using Microsoft.AspNetCore.Identity;
+using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
 using OwlBank.Models;
 using OwlBank.Repository;
-using OwlBank.Auth;
-using OwlBank.Extensions;
 using OwlBank.Services.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+
+namespace OwlBank.Services;
 
 [Dependency(typeof(IUserService))]
 public class UserService : IUserService
@@ -204,6 +194,7 @@ public class UserService : IUserService
         {
             throw new Exception("Passwords cannot be set as the old password.");
         }
+
         user.Password = _passwordHasher.HashPassword(newpassword);
         await _userRepository.Update(user);
     }

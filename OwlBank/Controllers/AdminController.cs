@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace OwlBank.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using OwlBank.DTOs.UserDTO;
 using OwlBank.Models;
 using OwlBank.Services;
 
+[EnableRateLimiting("fixedWindow")]
 [ApiController]
 [Route("users")]
 [Authorize(Roles = $"{nameof(Role.Manager)}, {nameof(Role.Admin)}")]

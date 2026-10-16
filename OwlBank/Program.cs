@@ -6,6 +6,8 @@ using OwlBank.Auth.Contracts.Interfaces;
 using OwlBank.Services.Implementations;
 using Microsoft.AspNetCore.Http.Features;
 using OwlBank.Exceptions;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 builder.Services.AddFluentValidation();
 builder.Services.AddDependencies();
-
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddProblemDetails(options =>
@@ -33,6 +35,20 @@ builder.Services.AddProblemDetails(options =>
 
 
     };
+});
+
+builder.Services.AddRateLimiter(rateLimiter=>
+{
+    rateLimiter.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    rateLimiter.AddFixedWindowLimiter("fixedWindow", action =>
+    {
+        action.Window = TimeSpan.FromSeconds(10);
+        action.PermitLimit = 5;
+        action.QueueLimit = 2;
+        action.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+
+    });
 });
 
 builder.Services.AddExceptionHandler<ProblemExceptionHandler>();
@@ -71,6 +87,7 @@ builder.Services.AddScoped<ILoginService, AuthHttpLoginService>();
 
 var app = builder.Build();
 
+app.UseRateLimiter();
 app.UseExceptionHandler();
 app.MapDefaultEndpoints();
 

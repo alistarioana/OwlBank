@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using OwlBank.Auth.Contracts.DTOs;
 using OwlBank.Auth.Contracts.Interfaces;
 using OwlBank.Extensions;
@@ -7,6 +8,7 @@ using System.Security.Cryptography;
 
 namespace OwlBank.Auth.Controllers;
 
+[EnableRateLimiting("fixedWindow")]
 [ApiController]
 [Route("api")]
 public class LoginController : ControllerBase

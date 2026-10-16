@@ -1,15 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
 using OwlBank.Auth.Contracts.Interfaces;
 using OwlBank.Exceptions;
-using OwlBank.Extensions;
 using OwlBank.Repository;
 using OwlBank.Services.Implementations;
 using OwlBank.Services.Interfaces;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +35,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
+builder.Services.AddRateLimiter(rateLimiter =>
+{
+    rateLimiter.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    rateLimiter.AddFixedWindowLimiter("fixedWindow", action =>
+    {
+        action.Window = TimeSpan.FromSeconds(10);
+        action.PermitLimit = 5;
+        action.QueueLimit = 2;
+        action.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+
+    });
+});
 builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddProblemDetails(options =>
@@ -67,7 +80,7 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "OwlBank Auth v1");
     c.EnablePersistAuthorization();
 });
-
+app.UseRateLimiter();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
